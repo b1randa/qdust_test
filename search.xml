@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>案例三：使用Python基于K近邻实现商品推荐</title>
+      <link href="/2021/06/02/ji-qi-xue-xi-an-li-san/"/>
+      <url>/2021/06/02/ji-qi-xue-xi-an-li-san/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><p>• 掌握K近邻的使用场景；</p><p>• 理解KNN（K近邻）的原理；</p><p>• 掌握使用K近邻实现推荐类的过程。</p><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><p>使用K近邻算法实现电影的推荐，即根据你喜欢的影片推荐与其相似的影片。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><p>• K近邻算法基本原理；</p><p>• 使用K近邻算法实现电影推荐。</p><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2学时，具体安排如下：</p><p>• 处理数据（1.4学时）</p><p>• 训练模型（0.3学时）</p><p>• 预测结果（0.3学时）</p><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li><p><strong>操作系统：</strong></p><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol></li><li><p><strong>软件环境：</strong></p><ol><li><p>Python 3.7</p></li><li><p>sklearn 0.23</p></li></ol></li><li><p><strong>开发环境与工具：</strong></p><ol><li>Spyder 4</li></ol></li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例使用的是无监督KNN。</p><p>处理数据，使得电影条数为行，打分用户数为列（如电影数量是1000部，打分用户数是800个，那么数据就是1000行800列）。</p><p>使用无监督KNN基于余弦相似度找到距离较近的电影，从而实现电影推荐。</p><p><strong><a href="../../../../public/themes/matery/source/medias/files/机器学习/案例三：使用Python基于K近邻实现商品推荐.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 机器学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>案例二：基于K-Means根据信用卡消费情况推荐银行理财产品</title>
       <link href="/2021/06/02/ji-qi-xue-xi-an-li-er/"/>
       <url>/2021/06/02/ji-qi-xue-xi-an-li-er/</url>
