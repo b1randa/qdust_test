@@ -1,0 +1,866 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="案例一：基于Apriori挖掘超市商品之间关联性, 青岛科技大学 人工智能案例">
+    <meta name="baidu-site-verification" content="fmlEuI34ir">
+    <meta name="google-site-verification" content="yCy2azpds5XSuGZvis6OuA-XIGF5GuGpYRAaGfD6o48">
+    <meta name="360-site-verification" content="b7c11a830ef90fd1464ad6206bb7b6e7">
+    <meta name="description" content="1 案例目的
+理解关联规则分析问题的场景
+掌握Apriori算法
+
+2 案例内容某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。
+3 案例知识点
+Python语言编">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>案例一：基于Apriori挖掘超市商品之间关联性 | 青岛科技大学</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ce84511d3df71640a9378a69f6293044";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+    
+
+    <script>
+        (function(){
+        var src = "https://jspassport.ssl.qhimg.com/11.0.1.js?d182b3f28525f2db83acfaaf6e696dba";
+        document.write('<script src="' + src + '" id="sozz"><\/script>');
+        })();
+    </script>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">青岛科技大学</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/categories" class="waves-effect waves-light">
+            
+            <i class="fa fa-bookmark"></i>
+            
+            <span>分类</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/archives" class="waves-effect waves-light">
+            
+            <i class="fa fa-archive"></i>
+            
+            <span>归档</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">青岛科技大学</div>
+        <div class="logo-desc">
+            
+            机器学习 | 神经网络与深度学习 | 数字图像处理 | 图像识别 | 自然语言学习
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="/categories" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-bookmark"></i>
+                
+                分类
+            </a>
+        </li>
+        
+        <li>
+            <a href="/archives" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-archive"></i>
+                
+                归档
+            </a>
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        案例一：基于Apriori挖掘超市商品之间关联性
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        <span class="chip bg-color">无标签</span>
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                        <a href="/categories/机器学习/" class="post-category" target="_blank">
+                            机器学习
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2021-06-02
+                </div>
+
+                <div class="post-author info-break-policy">
+                    <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                    
+                    B1randa
+                    
+                </div>
+
+                
+                
+                <div class="info-break-policy">
+                    <i class="fa fa-file-word-o fa-fw"></i>案例文件字数:&nbsp;&nbsp;
+                    3k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="fa fa-clock-o fa-fw"></i>浏览时长:&nbsp;&nbsp;
+                    12 分
+                </div>
+                
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul>
+<li>理解关联规则分析问题的场景</li>
+<li>掌握Apriori算法</li>
+</ul>
+<h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><p>某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。</p>
+<h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><ul>
+<li>Python语言编程</li>
+<li>关联规则分析问题的场景</li>
+<li>Apriori算法</li>
+</ul>
+<h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2学时，具体安排如下：</p>
+<ul>
+<li>数据预处理（0.5学时）</li>
+<li>做关联规则分析（1学时）</li>
+<li>查看分析结果（0.5学时）</li>
+<li>增加结果可读性（0.5学时）</li>
+</ul>
+<h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><p><strong>•操作系统：</strong></p>
+<ul>
+<li>Linux Ubuntu 16.04 64位操作系统</li>
+</ul>
+<p><strong>•软件环境：</strong></p>
+<ul>
+<li>Python 3.7</li>
+<li>apyori 1.1</li>
+</ul>
+<p><strong>•开发环境与工具：</strong></p>
+<ul>
+<li>Spyder 4</li>
+</ul>
+<h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下4部分：</p>
+<ol>
+<li>数据预处理，把数据处理成apriori模型需要的格式；</li>
+<li>建立关联规则分析模型，挖掘商品之间的关联性。通过设置不同的模型参数检验模型的性能；</li>
+<li>查看分析结果，理解分析结果的输出格式；</li>
+<li>处理模型输出的结果，增加结果的可读性。</li>
+</ol>
+<h1 id="7-案例实验过程"><a href="#7-案例实验过程" class="headerlink" title="7 案例实验过程"></a>7 案例实验过程</h1><p>基于Apriori分析超市商品的相关性，可分为以下6个步骤：</p>
+<ol>
+<li>导入库；</li>
+<li>导入数据集；</li>
+<li>数据预处理；</li>
+<li>做关联规则分析；</li>
+<li>查看分析结果；</li>
+<li>增加结果可读性。</li>
+</ol>
+<h2 id="7-1开发准备"><a href="#7-1开发准备" class="headerlink" title="7.1开发准备"></a>7.1开发准备</h2><p>在桌面上新建一个目录，名字叫market-goods。本案例中所有的数据集和代码都放在该目录下。</p>
+<h3 id="7-1-1-打开Spyder软件"><a href="#7-1-1-打开Spyder软件" class="headerlink" title="7.1.1 打开Spyder软件"></a>7.1.1 打开Spyder软件</h3><p>在桌面上点击Spyder图标打开Spyder，并把工作目录切换至market-goods目录下。</p>
+<h3 id="7-1-2-获取数据"><a href="#7-1-2-获取数据" class="headerlink" title="7.1.2 获取数据"></a>7.1.2 获取数据</h3><p>本案例需要1个数据集，是Market_Basket_Optimisation.csv，它是超市购物篮数据。</p>
+<p>点击右侧菜单栏中的【资源下载】按钮，复制提供的URL前缀，如<a href="https://xxx.eec-cn.com/。" target="_blank" rel="noopener">https://xxx.eec-cn.com/。</a></p>
+<p>将URL前缀和数据集地址拼接到一起，如<a href="https://xxx.eec-cn.com/dataSet/systemLib/733a31f28b6b42b294cc30de7f6b6db0.csv下载数据集。将下载后的数据集Market_Basket_Optimisation.csv复制到market-goods目录下。" target="_blank" rel="noopener">https://xxx.eec-cn.com/dataSet/systemLib/733a31f28b6b42b294cc30de7f6b6db0.csv下载数据集。将下载后的数据集Market_Basket_Optimisation.csv复制到market-goods目录下。</a></p>
+<h3 id="7-1-3-新建代码文件"><a href="#7-1-3-新建代码文件" class="headerlink" title="7.1.3 新建代码文件"></a>7.1.3 新建代码文件</h3><p>确保Spyder的工作目录为market-goods。使用Spyder新建一个Python文件，命名为apriori.py。</p>
+<p>至此，整个案例的目录结构如图1所示。</p>
+<p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602125404759.png" alt="图1 案例的目录结构"></p>
+<h3 id="7-1-4-了解数据"><a href="#7-1-4-了解数据" class="headerlink" title="7.1.4 了解数据"></a>7.1.4 了解数据</h3><p>数据内容如图2所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121421173.png" alt="图2 数据样式"></p>
+<p>数据源存储着7501条交易数据。每一条交易数据都记录了所购买的商品的名称。</p>
+<p>通过第2行可以看出，这位顾客买了burgers (肉三明治), meatballs (肉丸), eggs (鸡蛋)；通过第3行数据可以看出，这位顾客只买了chutney (酸辣酱)；通过第33行数据可以看出，顾客买了turkey (火鸡), french fries (炸薯条), strawberries (草莓)。</p>
+<p>商品之间是否有关联性呢？请看图3。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121429959.png" alt="图3 商品之间是否有关联性"></p>
+<p>通过第57、60、97行数据可以发现，turkey (火鸡)和frozen vegetables (速冻蔬菜)同时出现了好几次。是否意味着买了turkey一般就会买frozen vegetables呢，或者说买了frozen vegetables一般就会买turkey呢？</p>
+<p>在用科学的方法分析之前，首先在网上看看turkey和frozen vegetable是否有关联。打开bing搜索（<a href="http://www.bing.com），选择国际版，输入关键词’turkey" target="_blank" rel="noopener">www.bing.com），选择国际版，输入关键词’turkey</a> frozen vegetable’，结果如图4所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121438693.png" alt="图4 上网搜索turkey和frozen vegetable是否有关系"></p>
+<p>可以看出，在欧美很多人用turkey和frozen vegetable做汤、炖菜等。所以看起来turkey和frozen vegetable可能有关联。下面用科学的方法来找出所有相关联的商品。</p>
+<h2 id="7-2导入库"><a href="#7-2导入库" class="headerlink" title="7.2导入库"></a>7.2导入库</h2><p>导入pandas库和apriori库。</p>
+<p><strong>【代码7-2】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 导入包</span>
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">from</span> apyori <span class="token keyword">import</span> apriori<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<h2 id="7-3导入数据集"><a href="#7-3导入数据集" class="headerlink" title="7.3导入数据集"></a>7.3导入数据集</h2><p>导入数据集，查看数据格式。</p>
+<p><strong>【代码7-3】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 导入数据</span>
+dataset <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span><span class="token string">'Market_Basket_Optimisation.csv'</span><span class="token punctuation">,</span> header<span class="token operator">=</span>None<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>由于这个csv文件没有表头，所以header参数的值为None。</p>
+<p>将Spyder的面板切换到Variable explorer，便于随时查看变量的信息。</p>
+<p>dataset的变量信息如图5所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121553101.png" alt="图5 dataset的变量信息"></p>
+<p>由上图可知，数据集有7501行，20列。</p>
+<p>dataset变量的值如图6所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121559182.png" alt="图6 dataset变量的值"></p>
+<p>由上图可知，数据集有20列，表明在7501条交易记录中，最多的一次买了20个商品。当交易记录不足20时，用nan替代。上图的第2行数据，只买了3个商品，所以剩下的17列数据都是nan。</p>
+<h2 id="7-4数据预处理"><a href="#7-4数据预处理" class="headerlink" title="7.4数据预处理"></a>7.4数据预处理</h2><p>数据预处理是把数据集中的数据格式处理成apriori所需要的格式。</p>
+<p>apriori所需要的数据格式需满足3个条件：</p>
+<p>• 数据存储在list中（称之为list A）。list的每一个元素是一条交易记录。</p>
+<p>• list A中的每一个元素也是list类型（称之为list B），list B的每一个元素是一个商品。</p>
+<p>• 把nan也看做一种商品。即所有的list B的长度都是20（数据集有20列）。</p>
+<p>如果上述表达不好理解，请执行代码查看效果，以辅助理解。</p>
+<p><strong>【代码7-4】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 数据预处理</span>
+transactions <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">7501</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    transactions<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token punctuation">[</span>str<span class="token punctuation">(</span>dataset<span class="token punctuation">.</span>values<span class="token punctuation">[</span>i<span class="token punctuation">,</span> j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> j <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>transactions变量的值如图7所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121729982.png" alt="图7 transactions变量的值"></p>
+<h2 id="7-5做关联规则分析"><a href="#7-5做关联规则分析" class="headerlink" title="7.5做关联规则分析"></a>7.5做关联规则分析</h2><p>apriori函数需要传6个参数。</p>
+<p>• transactions：传入的数据。数据一定要符合特定的格式。</p>
+<p>• min_support：这个参数的值由业务场景决定。这是一周的交易数据，所以认为平均一天被购买3次，一周被购买7天的商品才有分析的价值。最小support = 3*7/7501 = 0.0027996。把最小support设为0.003。</p>
+<p>• min_confidence：这个值是试探出来的。在R语言中，这个参数的默认值是0.8。将0.8传入发现apriori函数输出的结果是空。把参数值改为0.4，发现apriori函数输出的结果依然是空。把参数值改为0.2，发现apriori函数输出的结果不再是空。所以把值设为0.2。</p>
+<p>• min_lift：根据apriori的原理，lift指标是最重要的指标。根据经验，lift的值至少是3才能说明商品具有关联性。</p>
+<p>• min_length：这个参数的值由业务场景决定。在本场景中，只关心买了A商品还可能买哪个B商品，所以min_length和max_length的值都为2。如果把场景改为：买了A商品和B商品，还可能买哪个C商品，此时min_length和max_length的值都为3。</p>
+<p>• max_length：同上。</p>
+<p><strong>【代码7-5】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 做关联规则分析</span>
+rules <span class="token operator">=</span> apriori<span class="token punctuation">(</span>transactions <span class="token operator">=</span> transactions<span class="token punctuation">,</span> min_support <span class="token operator">=</span> <span class="token number">0.003</span><span class="token punctuation">,</span> min_confidence <span class="token operator">=</span> <span class="token number">0.2</span><span class="token punctuation">,</span> min_lift <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">,</span> min_length<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<h2 id="7-6查看分析结果"><a href="#7-6查看分析结果" class="headerlink" title="7.6查看分析结果"></a>7.6查看分析结果</h2><p>使用apriori构建关联规则分析模型后，查看分析结果。</p>
+<p><strong>【代码7-6】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 查看分析结果</span>
+results <span class="token operator">=</span> list<span class="token punctuation">(</span>rules<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>results<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>results[0]的输出结果如图8所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602121756522.png" alt="图8 results[0]的输出结果"></p>
+<p>注：results[0]变量的类型是RelationRecord，Spyder的Variable explorer对其支持不友好，所以才通过print()函数查看。绝大多数情况下都是通过Spyder的Variable explorer面板查看变量信息。</p>
+<p>由上图可见，light cream（低脂奶油）和chicken（鸡肉）有关联性，lift的值是4.84，confidence的值是0.29，support的值是0.004。</p>
+<p>light cream和chicken是有先后顺序的。在图8中，items_base是light cream，items_add是chicken，说明顾客先买了light cream后更倾向于再买chicken，并不能说明顾客先买了chicken后更倾向于再买light cream。</p>
+<p>下面需要验证light cream和chicken是否真的有很强的关联性。打开bing搜索（<a href="http://www.bing.com），选择国际版，输入关键词’light" target="_blank" rel="noopener">www.bing.com），选择国际版，输入关键词’light</a> cream chicken’，结果如图9所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602122016693.png" alt="图9 light cream chicken在网上的搜索结果"></p>
+<p>由上图可知，light cream和chicken可以搭配做很多好吃的，说明他们的关联性很强。</p>
+<p>results[0]的可读性并不是很好。下面需要把results的结果存储到DataFrame中，增加结果可读性。</p>
+<h2 id="7-7增加结果可读性"><a href="#7-7增加结果可读性" class="headerlink" title="7.7增加结果可读性"></a>7.7增加结果可读性</h2><p>为了增加结果可读性，现对results结果做进一步处理。</p>
+<p>为了增加结果可读性，首先要了解关联规则分析结果（results[0]）的输出格式。关联规则分析结果（results[0]）已在图8展示。它是RelationRecord类型，里面有3个项，分别为items，support，ordered_statistics。下面代码分别得到这3项的值。</p>
+<p><strong>【代码7-7-1】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 探索关联规则分析结果的格式-1</span>
+result <span class="token operator">=</span> results<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_1 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+result_2 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_0 is: \n'</span><span class="token punctuation">,</span> result_0<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_1 is: \n'</span><span class="token punctuation">,</span> result_1<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2 is: \n'</span><span class="token punctuation">,</span> result_2<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>result_0、result_1、result_2的结果如图10所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602122222095.png" alt="图10 result_0、result_1、result_2的结果"></p>
+<p>RelationRecord里面有3个项，items是存在关联的对象集合，support存储着support的值，ordered_statistics存储着其他有意义的数据。</p>
+<p>下面主要从ordered_statistics这一项（result_2）中提取信息。result_2是list类型，表明存在一种可能性，items_base是light cream，items_add是chicken，同时items_base是chicken，items_add是light cream（此时list类型有2个元素）。当apriori函数参数的min_length和max_length的值都设为3时，result_2这个list的元素个数可能更多。在本案例中，light cream和chicken如果有关联性就捆绑销售或者放在同一个货架上，所以谁是items_base，谁是items_add已无所谓。所以这里只关心result[2][0]。</p>
+<p>下面从result[2][0]中提取items_base、items_add、confidence、lift信息，代码如下：</p>
+<p><strong>【代码7-7-2】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 探索关联规则分析结果的格式-2</span>
+result_2_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0 is: \n'</span><span class="token punctuation">,</span> result_2_0<span class="token punctuation">)</span>
+result_2_0_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_2_0_1 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+result_2_0_2 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span>
+result_2_0_3 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_0 is: \n'</span><span class="token punctuation">,</span> result_2_0_0<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_1 is: \n'</span><span class="token punctuation">,</span> result_2_0_1<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_2 is: \n'</span><span class="token punctuation">,</span> result_2_0_2<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_3 is: \n'</span><span class="token punctuation">,</span> result_2_0_3<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>result_2_0、result_2_0_0、result_2_0_1、result_2_0_2、result_2_0_3的结果如图11所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602122404637.png" alt="图11 result_2_0、result_2_0_0、result_2_0_1、result_2_0_2、result_2_0_3的结果"></p>
+<p>由上图可见，result_2_0_0对应items_base的值，result_2_0_1对应items_add的值，result_2_0_2对应confidence的值，result_2_0_3对应lift的值。</p>
+<p>下面写一个函数，把上面的代码整合，即把support的值、items_base的值、items_add的值、confidence的值、lift的值提取出来。然后把结果存储到DataFrame中。代码如下：</p>
+<p><strong>【代码7-7-3】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 增加结果可读性</span>
+<span class="token keyword">def</span> <span class="token function">inspect</span><span class="token punctuation">(</span>results<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    lhs <span class="token operator">=</span> <span class="token punctuation">[</span>tuple<span class="token punctuation">(</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    rhs <span class="token operator">=</span> <span class="token punctuation">[</span>tuple<span class="token punctuation">(</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    supports <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    confidences <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    lifts <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    <span class="token keyword">return</span> list<span class="token punctuation">(</span>zip<span class="token punctuation">(</span>lhs<span class="token punctuation">,</span> rhs<span class="token punctuation">,</span> supports<span class="token punctuation">,</span> confidences<span class="token punctuation">,</span> lifts<span class="token punctuation">)</span><span class="token punctuation">)</span>
+results_in_dataframe <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>inspect<span class="token punctuation">(</span>results<span class="token punctuation">)</span><span class="token punctuation">,</span> columns<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'先买的商品'</span><span class="token punctuation">,</span><span class="token string">'后买的商品'</span><span class="token punctuation">,</span><span class="token string">'Supports'</span><span class="token punctuation">,</span><span class="token string">'Confidences'</span><span class="token punctuation">,</span><span class="token string">'Lifts'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>把results_in_dataframe的值按lift排序，因为lift的值越大，说明关联性越高。代码如下：</p>
+<p><strong>【代码7-7-4】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 按lift倒序排序</span>
+results_in_dataframe <span class="token operator">=</span> results_in_dataframe<span class="token punctuation">.</span>nlargest<span class="token punctuation">(</span>n<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> columns<span class="token operator">=</span><span class="token string">'Lifts'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>results_in_dataframe变量的值如图12所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602122534860.png" alt="图12 results_in_dataframe变量的值"></p>
+<p>由上图可见，顾客购买了fromage blanc（自制酸奶奶酪），非常倾向于购买honey（蜂蜜）；</p>
+<p>顾客购买了pasta（意大利面），非常倾向于购买escalope（肉片）……</p>
+<p>结论：使用关联规则分析算法，可以找到有关联性的商品。</p>
+<h1 id="8-案例代码"><a href="#8-案例代码" class="headerlink" title="8 案例代码"></a>8 案例代码</h1><p><strong>【案例代码】apriori.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token triple-quoted-string string">'''
+基于Apriori分析超市商品的相关性
+安装apyori使用如下命令： pip install apyori
+'''</span>
+
+<span class="token comment" spellcheck="true"># 导入包</span>
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">from</span> apyori <span class="token keyword">import</span> apriori
+
+<span class="token comment" spellcheck="true"># 导入数据</span>
+dataset <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span><span class="token string">'Market_Basket_Optimisation.csv'</span><span class="token punctuation">,</span> header<span class="token operator">=</span>None<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 数据预处理</span>
+transactions <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">7501</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    transactions<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token punctuation">[</span>str<span class="token punctuation">(</span>dataset<span class="token punctuation">.</span>values<span class="token punctuation">[</span>i<span class="token punctuation">,</span> j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">for</span> j <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 做关联规则分析</span>
+rules <span class="token operator">=</span> apriori<span class="token punctuation">(</span>transactions <span class="token operator">=</span> transactions<span class="token punctuation">,</span> min_support <span class="token operator">=</span> <span class="token number">0.003</span><span class="token punctuation">,</span> min_confidence <span class="token operator">=</span> <span class="token number">0.2</span><span class="token punctuation">,</span> min_lift <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">,</span> min_length<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> max_length<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 查看分析结果</span>
+results <span class="token operator">=</span> list<span class="token punctuation">(</span>rules<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>results<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 探索关联规则分析结果的格式-1</span>
+result <span class="token operator">=</span> results<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_1 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+result_2 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_0 is: \n'</span><span class="token punctuation">,</span> result_0<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_1 is: \n'</span><span class="token punctuation">,</span> result_1<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2 is: \n'</span><span class="token punctuation">,</span> result_2<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 探索关联规则分析结果的格式-2</span>
+result_2_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0 is: \n'</span><span class="token punctuation">,</span> result_2_0<span class="token punctuation">)</span>
+result_2_0_0 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+result_2_0_1 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+result_2_0_2 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span>
+result_2_0_3 <span class="token operator">=</span> result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_0 is: \n'</span><span class="token punctuation">,</span> result_2_0_0<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_1 is: \n'</span><span class="token punctuation">,</span> result_2_0_1<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_2 is: \n'</span><span class="token punctuation">,</span> result_2_0_2<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'result_2_0_3 is: \n'</span><span class="token punctuation">,</span> result_2_0_3<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 增加结果可读性</span>
+<span class="token keyword">def</span> <span class="token function">inspect</span><span class="token punctuation">(</span>results<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    lhs <span class="token operator">=</span> <span class="token punctuation">[</span>tuple<span class="token punctuation">(</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    rhs <span class="token operator">=</span> <span class="token punctuation">[</span>tuple<span class="token punctuation">(</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    supports <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    confidences <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    lifts <span class="token operator">=</span> <span class="token punctuation">[</span>result<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token keyword">for</span> result <span class="token keyword">in</span> results<span class="token punctuation">]</span>
+    <span class="token keyword">return</span> list<span class="token punctuation">(</span>zip<span class="token punctuation">(</span>lhs<span class="token punctuation">,</span> rhs<span class="token punctuation">,</span> supports<span class="token punctuation">,</span> confidences<span class="token punctuation">,</span> lifts<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+results_in_dataframe <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>inspect<span class="token punctuation">(</span>results<span class="token punctuation">)</span><span class="token punctuation">,</span> columns<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'先买的商品'</span><span class="token punctuation">,</span><span class="token string">'后买的商品'</span><span class="token punctuation">,</span><span class="token string">'Supports'</span><span class="token punctuation">,</span><span class="token string">'Confidences'</span><span class="token punctuation">,</span><span class="token string">'Lifts'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 按lift倒序排序</span>
+results_in_dataframe <span class="token operator">=</span> results_in_dataframe<span class="token punctuation">.</span>nlargest<span class="token punctuation">(</span>n<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> columns<span class="token operator">=</span><span class="token string">'Lifts'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+            </div>
+            <hr />
+
+            
+
+            
+
+            
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-yi/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="案例一：基于Apriori挖掘超市商品之间关联性">
+                        
+                        <span class="card-title">案例一：基于Apriori挖掘超市商品之间关联性</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/机器学习/" class="post-category" target="_blank">
+                                    机器学习
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                本篇&nbsp;<i class="fa fa-dot-circle-o"></i>
+            </div>
+            <div class="card">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-yi/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="案例一：基于Apriori挖掘超市商品之间关联性">
+                        
+                        <span class="card-title">案例一：基于Apriori挖掘超市商品之间关联性</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/机器学习/" class="post-category" target="_blank">
+                                    机器学习
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fa fa-list"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+    
+
+</main>
+
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
+
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+<!-- 代码语言 -->
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+<!-- 代码块复制 -->
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+<script type="text/javascript" src="/libs/codeBlock/clipboard.min.js"></script>
+<!-- 代码块收缩 -->
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script> 
+<!-- 代码块折行 -->
+<style type="text/css">code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }</style>
+
+
+    
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <script type="text/javascript"> var OriginTitile = document.title, st; document.addEventListener("visibilitychange", )
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+</body>
+
+</html>
