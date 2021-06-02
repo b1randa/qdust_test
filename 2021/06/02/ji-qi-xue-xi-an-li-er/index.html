@@ -1,0 +1,1072 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="基于K-Means根据信用卡消费情况推荐银行理财产品, 青岛科技大学 人工智能案例">
+    <meta name="baidu-site-verification" content="fmlEuI34ir">
+    <meta name="google-site-verification" content="yCy2azpds5XSuGZvis6OuA-XIGF5GuGpYRAaGfD6o48">
+    <meta name="360-site-verification" content="b7c11a830ef90fd1464ad6206bb7b6e7">
+    <meta name="description" content="1.案例目的• 理解聚类问题的场景；
+• 掌握解决聚类问题的整套流程；
+• 掌握数据预处理和聚类模型的构建。
+2. 案例内容根据信用卡消费情况推荐银行理财产品案例将对8950条持卡人信用卡数据的18个信用卡相关的属性进行分析，建立聚类模型，">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>基于K-Means根据信用卡消费情况推荐银行理财产品 | 青岛科技大学</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ce84511d3df71640a9378a69f6293044";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+    
+
+    <script>
+        (function(){
+        var src = "https://jspassport.ssl.qhimg.com/11.0.1.js?d182b3f28525f2db83acfaaf6e696dba";
+        document.write('<script src="' + src + '" id="sozz"><\/script>');
+        })();
+    </script>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body>
+
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">青岛科技大学</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/categories" class="waves-effect waves-light">
+            
+            <i class="fa fa-bookmark"></i>
+            
+            <span>分类</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">青岛科技大学</div>
+        <div class="logo-desc">
+            
+            机器学习 | 神经网络与深度学习 | 数字图像处理 | 图像识别 | 自然语言学习
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="/categories" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-bookmark"></i>
+                
+                分类
+            </a>
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        基于K-Means根据信用卡消费情况推荐银行理财产品
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        <span class="chip bg-color">无标签</span>
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                        <a href="/categories/机器学习/" class="post-category" target="_blank">
+                            机器学习
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2021-06-02
+                </div>
+
+                <div class="post-author info-break-policy">
+                    <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                    
+                    B1randa
+                    
+                </div>
+
+                
+                
+                <div class="info-break-policy">
+                    <i class="fa fa-file-word-o fa-fw"></i>案例文件字数:&nbsp;&nbsp;
+                    4.8k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="fa fa-clock-o fa-fw"></i>浏览时长:&nbsp;&nbsp;
+                    19 分
+                </div>
+                
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><p>• 理解聚类问题的场景；</p>
+<p>• 掌握解决聚类问题的整套流程；</p>
+<p>• 掌握数据预处理和聚类模型的构建。</p>
+<h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>根据信用卡消费情况推荐银行理财产品案例将对8950条持卡人信用卡数据的18个信用卡相关的属性进行分析，建立聚类模型，对这8950个持卡人进行客户分组，然后把银行的理财产品推荐给优秀的分组。</p>
+<h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><p>• Python语言编程；</p>
+<p>• 数据处理；</p>
+<p>• 聚类模型；</p>
+<p>• 分析聚类结果。</p>
+<h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p>
+<p>• 数据预处理（2学时）</p>
+<p>• 构建聚类模型（1学时）</p>
+<p>• 分析每一个分组（1学时）</p>
+<h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><p><strong>•操作系统：</strong></p>
+<p>1）Linux Ubuntu 16.04 64位操作系统</p>
+<p><strong>•软件环境：</strong></p>
+<p>1）Python 3.7</p>
+<p>2）Sklearn 0.23</p>
+<p><strong>•开发环境与工具：</strong></p>
+<p>1）Spyder 4</p>
+<h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p>
+<p>1）处理数据，为建立聚类模型做准备；</p>
+<p>2）构建聚类模型，并使用轮廓系数的方法选择K-Means中K的个数；</p>
+<p>3）探索K-Means得到的每一个客户分组，从每一个客户分组中得到线索，从而找到目标客户。</p>
+<h1 id="7-案例实验过程"><a href="#7-案例实验过程" class="headerlink" title="7. 案例实验过程"></a>7. 案例实验过程</h1><p>根据信用卡消费情况推荐银行理财产品，可分为以下3个步骤：</p>
+<ol>
+<li><p>数据预处理；</p>
+<p>1.1.导入数据预处理的包；</p>
+<p>1.2.导入数据集；</p>
+<p>1.3.了解数据集；</p>
+<p>1.4.分析字段相关性；</p>
+<p>1.5.处理缺失数据；</p>
+<p>1.6.处理类别型字段；</p>
+<p>1.7.删除无用的变量；</p>
+<p>1.8.特征提取；</p>
+<p>1.9.特征缩放。</p>
+</li>
+<li><p>构建聚类模型；</p>
+<p>2.1.聚类个数判断；</p>
+<p>2.2.构建聚类模型；</p>
+<p>2.3.可视化聚类效果；</p>
+</li>
+<li><p>分析每一个分组；</p>
+</li>
+</ol>
+<h2 id="7-1开发准备"><a href="#7-1开发准备" class="headerlink" title="7.1开发准备"></a>7.1开发准备</h2><p>在桌面上新建一个目录，名字叫finance。本案例中所有的数据集和代码都放在该目录下。</p>
+<h3 id="7-1-1-打开Spyder软件"><a href="#7-1-1-打开Spyder软件" class="headerlink" title="7.1.1 打开Spyder软件"></a>7.1.1 打开Spyder软件</h3><p>在桌面上点击Spyder图标打开Spyder，并把工作目录切换至finance目录下。</p>
+<h3 id="7-1-2-获取数据"><a href="#7-1-2-获取数据" class="headerlink" title="7.1.2 获取数据"></a>7.1.2 获取数据</h3><p>本案例需要1个数据集，是credit_card.csv。</p>
+<p>点击右侧菜单栏中的【资源下载】按钮，复制提供的URL前缀，如<a href="https://xxx.eec-cn.com/。" target="_blank" rel="noopener">https://xxx.eec-cn.com/。</a></p>
+<p>将URL前缀和数据集地址拼接到一起，如<a href="https://xxx.eec-cn.com/dataSet/systemLib/58e4e723888d4cf48b6a8e4711499821.csv下载数据集。将下载后的数据集credit_card.csv复制到finance目录下。" target="_blank" rel="noopener">https://xxx.eec-cn.com/dataSet/systemLib/58e4e723888d4cf48b6a8e4711499821.csv下载数据集。将下载后的数据集credit_card.csv复制到finance目录下。</a></p>
+<h3 id="7-1-3-新建代码文件"><a href="#7-1-3-新建代码文件" class="headerlink" title="7.1.3 新建代码文件"></a>7.1.3 新建代码文件</h3><p>确保Spyder的工作目录为finance。使用Spyder新建一个Python文件，命名为financial_management_recommendation.py。</p>
+<p>至此，整个案例的目录结构如图1所示。</p>
+<p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602142728849.png" alt="图1 案例的目录结构"></p>
+<h3 id="7-1-4-了解数据"><a href="#7-1-4-了解数据" class="headerlink" title="7.1.4 了解数据"></a>7.1.4 了解数据</h3><p>credit.csv存储着8950条客户信用卡数据，总共有18个字段。字段含义如下：</p>
+<ul>
+<li>CUST_ID：信用卡持有人的身份证明</li>
+<li>BALANCE：信用卡可用余额</li>
+<li>BALANCE_FREQUENCY：信用卡余额变动频率，得分在0到1之间（1 =频繁更新，0 =不频繁更新）</li>
+<li>PURCHASES：信用卡消费金额</li>
+<li>ONEOFF_PURCHASES：信用卡单次最大刷卡金额</li>
+<li>INSTALLMENTS_PURCHASES：信用卡分期金额</li>
+<li>CASH_ADVANCE：信用卡提现金额</li>
+<li>PURCHASES_FREQUENCY：信用卡刷卡频率，得分在0到1之间（1 =频繁刷卡，0 =不频繁刷卡）</li>
+<li>ONEOFF_PURCHASES_FREQUENCY：一次购买的频率（1 =频繁购买，0 =不频繁购买）</li>
+<li>PURCHASES_INSTALLMENTS_FREQUENCY：信用卡分期频率（1 =频繁分期，0 =不频繁分期）</li>
+<li>CASH_ADVANCE_FREQUENCY：信用卡提现频率</li>
+<li>CASH_ADVANCE_TRX：使用“信用卡提现”进行的交易数量</li>
+<li>PURCHASES_TRX：进行的购买交易数</li>
+<li>CREDIT_LIMIT：信用卡额度</li>
+<li>PAYMENTS：信用卡还款金额</li>
+<li>MINIMUM_PAYMENTS：信用卡最低还款金额</li>
+<li>PRC_FULL_PAYMENT：信用卡全额还款次数比例</li>
+<li>TENURE：用户的信用卡服务的使用权</li>
+</ul>
+<h2 id="7-2数据预处理"><a href="#7-2数据预处理" class="headerlink" title="7.2数据预处理"></a>7.2数据预处理</h2><p>该模块作用是加载数据源并进行必要的数据预处理。</p>
+<p>向financial_management_recommendation.py中添加代码如下：</p>
+<h3 id="7-2-1-导入数据预处理的包"><a href="#7-2-1-导入数据预处理的包" class="headerlink" title="7.2.1 导入数据预处理的包"></a>7.2.1 导入数据预处理的包</h3><p><strong>【代码7-2-1】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 导入包</span>
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<h3 id="7-2-2-导入数据集"><a href="#7-2-2-导入数据集" class="headerlink" title="7.2.2 导入数据集"></a>7.2.2 导入数据集</h3><p><strong>【代码7-2-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 读取数据集</span>
+dataset <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span><span class="token string">'credit_card.csv'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>在Variable explorer面板中双击dataset这个变量查看它的值。dataset变量的值如图2所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150229663.png" alt="图2 dataset变量的值"></p>
+<p>18个字段中只有第一个字段CUST_ID是字符型，其它17个都是数值型。</p>
+<h3 id="7-2-3-了解数据集"><a href="#7-2-3-了解数据集" class="headerlink" title="7.2.3 了解数据集"></a>7.2.3 了解数据集</h3><p><strong>【代码7-2-3】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 查看数据集情况</span>
+dataset_description_df <span class="token operator">=</span> dataset<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>在Variable Explorer面板中双击dataset_description_df变量查看它的值如图3所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150302669.png" alt="图3 dataset_description_df变量的值"></p>
+<h3 id="7-2-4-分析字段相关性"><a href="#7-2-4-分析字段相关性" class="headerlink" title="7.2.4 分析字段相关性"></a>7.2.4 分析字段相关性</h3><p>通常使用热力图画出所有数值型字段的相关性。下面代码将画出17个数值型字段的热力图。</p>
+<p><strong>【代码7-2-4-1】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 查看相关性-热力图</span>
+<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
+corrmat <span class="token operator">=</span> dataset<span class="token punctuation">.</span>corr<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">,</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xticks<span class="token punctuation">(</span>rotation<span class="token operator">=</span><span class="token number">90</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>yticks<span class="token punctuation">(</span>rotation<span class="token operator">=</span><span class="token number">90</span><span class="token punctuation">)</span>
+sns<span class="token punctuation">.</span>heatmap<span class="token punctuation">(</span>corrmat<span class="token punctuation">,</span> vmax<span class="token operator">=</span><span class="token number">1.0</span><span class="token punctuation">,</span> square<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>热力图如图4所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150345456.png" alt="图4 各个变量的热力图"></p>
+<p>由上图可见，ONEOFF_PURCHASES和PURCHASES字段之间有相关性，PURCHASES_FREQUENCY和PURCHASES_INSTALLMENTS_FREQUENCY有相关性。根据皮尔森相关性得到具体的相关系数，和热力图相辅相成。</p>
+<p><strong>【代码7-2-4-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 查看相关性-皮尔森系数</span>
+corr_data <span class="token operator">=</span> dataset<span class="token punctuation">.</span>corr<span class="token punctuation">(</span>method<span class="token operator">=</span><span class="token string">'pearson'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>字段之间的皮尔森系数保存到了corr_data变量中。在Variable explorer面板中双击corr_data变量查看它的值，如图5所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150409113.png" alt="图5 corr_data变量的值"></p>
+<p>通过上图发现，PURCHASES和ONEOFF_PURCHASES相关性为0.916845。根据皮尔森系数，数据的绝对值越接近于1，2个字段相关性越高。这意味着需要做特征选择或特征提取的工作。在接下来的步骤中将做特征提取。</p>
+<h3 id="7-2-5-处理缺失数据"><a href="#7-2-5-处理缺失数据" class="headerlink" title="7.2.5 处理缺失数据"></a>7.2.5 处理缺失数据</h3><p>处理缺失数据是建模之前的重要步骤。先统计一下哪些字段有缺失数据，缺失条数是多少。</p>
+<p><strong>【代码7-2-5-1】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 检查缺失数据</span>
+<span class="token keyword">def</span> <span class="token function">get_missing_data_summary</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    dataset_na <span class="token operator">=</span> dataset<span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>sum<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    dataset_na <span class="token operator">=</span> dataset_na<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset_na<span class="token punctuation">[</span>dataset_na <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span><span class="token punctuation">.</span>sort_values<span class="token punctuation">(</span>ascending<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span> 
+    missing_data <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">'Missing Count'</span> <span class="token punctuation">:</span>dataset_na<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> missing_data
+
+missing_data <span class="token operator">=</span> get_missing_data_summary<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>缺失数据的信息存储到了missing_data变量中。双击该变量查看它的值，如图6所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150503300.png" alt="图6 missing_data变量的值"></p>
+<p>CREDIT_LIMIT只有1条数据，可以直接删除。</p>
+<p>MINIMUM_PAYMENTS意思是最低还款，有313条空数据，不能删除。根据填补空缺数据的原则，首先要依据业务来修补。在这里最低还款是基于复杂的公式计算出来的，需要咨询业务人员。在本案例中，为了方便起见，直接删除。</p>
+<p><strong>【代码7-2-5-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 处理缺失数据</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'CREDIT_LIMIT'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'MINIMUM_PAYMENTS'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>再次检验是否有缺失数据。</p>
+<p><strong>【代码7-2-5-3】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python">missing_data <span class="token operator">=</span> get_missing_data_summary<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>缺失数据的检验结果如图7所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150615626.png" alt="图7 missing_data变量的值"></p>
+<p>发现已经没有缺失数据了。</p>
+<h3 id="7-2-6-处理类别型字段"><a href="#7-2-6-处理类别型字段" class="headerlink" title="7.2.6 处理类别型字段"></a>7.2.6 处理类别型字段</h3><p><strong>【代码7-2-6】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 处理类别型字段</span>
+categorical_features <span class="token operator">=</span> dataset<span class="token punctuation">.</span>dtypes<span class="token punctuation">[</span>dataset<span class="token punctuation">.</span>dtypes <span class="token operator">==</span> <span class="token string">'O'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'There are %d categorical features'</span> <span class="token operator">%</span><span class="token punctuation">(</span>len<span class="token punctuation">(</span>categorical_features<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>只有1个字符型字段，这个字段是CUST_ID（持卡人编号）。</p>
+<p>很多时候类别型字段的类型不一定是字符串型，也有可能是数值型，比如性别字段的值是0和1。所以需要检查所有列，确保每一列都是真正的数值型。检查之后发现其余列全部都是数值型。</p>
+<p>无类别型字段需要处理，即不需要字符编码、独热编码等操作。</p>
+<h3 id="7-2-7-删除无用的变量"><a href="#7-2-7-删除无用的变量" class="headerlink" title="7.2.7 删除无用的变量"></a>7.2.7 删除无用的变量</h3><p>上面刚提到的字段CUST_ID（持卡人编号）是无用的字段，直接删除。</p>
+<p><strong>【代码7-2-7】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 移除无用的列</span>
+X <span class="token operator">=</span> dataset<span class="token punctuation">.</span>iloc<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<h3 id="7-2-8-特征提取"><a href="#7-2-8-特征提取" class="headerlink" title="7.2.8 特征提取"></a>7.2.8 特征提取</h3><p>在7.2.4分析字段相关性时，发现自变量之间具有相关性。为了使模型泛化能力更强，所以需要对数据做降维（特征选择或特征提取）。</p>
+<p>降维的知识点超纲了，所以本部分不要求掌握。</p>
+<p>特征提取是减少变量个数的常用方法，尤其以PCA使用居多。在聚类算法中，由于使用特征提取大大的缩减了变量的个数，使得分析起来会更加简单方便。</p>
+<p><strong>【代码7-2-8-1】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 使用PCA降维</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>decomposition <span class="token keyword">import</span> PCA
+pca <span class="token operator">=</span> PCA<span class="token punctuation">(</span>n_components <span class="token operator">=</span> None<span class="token punctuation">)</span>
+X_pca <span class="token operator">=</span> pca<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X<span class="token punctuation">)</span>
+explained_variance_ratio <span class="token operator">=</span> pca<span class="token punctuation">.</span>explained_variance_ratio_<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>接下来画出number of componence vs cumulative explained variance之间的关系图。这是PCA常用的图，以此来判断前几个字段就可以解释所有字段。</p>
+<p><strong>【代码7-2-8-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 画出累计方差解释图，用于选择新生成的自变量的个数</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>np<span class="token punctuation">.</span>cumsum<span class="token punctuation">(</span>pca<span class="token punctuation">.</span>explained_variance_ratio_<span class="token punctuation">)</span><span class="token punctuation">,</span> c<span class="token operator">=</span><span class="token string">'orange'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'number of components'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'cumulative explained variance'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>自变量个数 vs 累计方差解释图的效果如图8所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150757646.png" alt="图8 自变量个数 vs 累计方差解释图的效果"></p>
+<p>如图所示，选取前2个字段可以达到80%的方差解释，基本可以解释整个数据集。这里暂时选取2个字段。同学们有时间可以尝试选取3个或4个自变量。</p>
+<p>使用PCA转换自变量。</p>
+<p><strong>【代码7-2-8-3】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 选择新生成的自变量的个数</span>
+pca <span class="token operator">=</span> PCA<span class="token punctuation">(</span>n_components <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">)</span>
+X_pca <span class="token operator">=</span> pca<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>现在自变量变为X_pca，不再是X。</p>
+<p>PCA是线性的特征提取方法。如果同学们有时间，可以试一下非线性的特征提取方法，如Kernel PCA。</p>
+<h3 id="7-2-9-特征缩放"><a href="#7-2-9-特征缩放" class="headerlink" title="7.2.9 特征缩放"></a>7.2.9 特征缩放</h3><p>特征缩放是数据预处理的最后一步。建立模型之前建议都需要特征缩放。</p>
+<p><strong>【代码7-2-9】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 特征缩放</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> StandardScaler
+sc_X <span class="token operator">=</span> StandardScaler<span class="token punctuation">(</span><span class="token punctuation">)</span>
+X_scaled <span class="token operator">=</span> sc_X<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X_pca<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>数据预处理至此就结束了。下面的案例将使用这些处理好的数据建立机器学习模型，并且给不同客户推荐合适的理财产品。</p>
+<h2 id="7-3构建聚类模型"><a href="#7-3构建聚类模型" class="headerlink" title="7.3构建聚类模型"></a>7.3构建聚类模型</h2><p>在聚类模型中，Kmeans使用广泛且准确性高。这里使用Kmeans来进行聚类。</p>
+<h3 id="7-3-1-聚类个数判断"><a href="#7-3-1-聚类个数判断" class="headerlink" title="7.3.1 聚类个数判断"></a>7.3.1 聚类个数判断</h3><p>这里使用轮廓系数来判断聚类的个数。</p>
+<p>当K-Means中K的个数在2-20时，不断打印轮廓系数。</p>
+<p>【代码7-3-1】financial_management_recommendation.py</p>
+<p>#%%</p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 训练K-Means模型</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> silhouette_score <span class="token comment" spellcheck="true"># 轮廓系数</span>
+
+<span class="token comment" spellcheck="true"># 打印轮廓系数，确定K-Means中K的个数</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">21</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters <span class="token operator">=</span> i<span class="token punctuation">,</span> init <span class="token operator">=</span> <span class="token string">'k-means++'</span><span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> max_iter<span class="token operator">=</span><span class="token number">300</span><span class="token punctuation">,</span> random_state <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    kmeans<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+    y_kmeans <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+    silhouette <span class="token operator">=</span> silhouette_score<span class="token punctuation">(</span>X_scaled<span class="token punctuation">,</span> y_kmeans<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'当聚类个数是%d时，对应的轮廓系数是%.4f'</span> <span class="token operator">%</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> silhouette<span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>不断打印出的轮廓系数如图9所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602150933547.png" alt="图9 不断打印出的轮廓系数"></p>
+<p>通过上图发现，聚类的个数是4时，轮廓系数的值最高，达到0.5715。所以选择4个类别最合适。</p>
+<h3 id="7-3-2-构建聚类模型"><a href="#7-3-2-构建聚类模型" class="headerlink" title="7.3.2 构建聚类模型"></a>7.3.2 构建聚类模型</h3><p><strong>【代码7-3-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 使用K=4建立K-Means模型</span>
+kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span> init <span class="token operator">=</span> <span class="token string">'k-means++'</span><span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> max_iter<span class="token operator">=</span><span class="token number">300</span><span class="token punctuation">,</span> random_state <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+kmeans<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+y_kmeans <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>聚类模型建立完毕。</p>
+<h3 id="7-3-3-可视化聚类效果"><a href="#7-3-3-可视化聚类效果" class="headerlink" title="7.3.3 可视化聚类效果"></a>7.3.3 可视化聚类效果</h3><p>可视化后，很容易看到分组是否合理。</p>
+<p><strong>【代码7-3-3】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 可视化聚类效果</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'red'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 0'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'blue'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 1'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'green'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 2'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'cyan'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 3'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>kmeans<span class="token punctuation">.</span>cluster_centers_<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> kmeans<span class="token punctuation">.</span>cluster_centers_<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">300</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'yellow'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Centroids'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">'Clusters of customers'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'pca1'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'pca2'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>聚类效果的可视化效果如图10所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151039231.png" alt="图10 聚类效果"></p>
+<p>通过上图可以发现，聚类效果看起来是合理的。是否真的合理呢，接下来需要对每一个类别进行分析。</p>
+<h2 id="7-4分析每一个分组"><a href="#7-4分析每一个分组" class="headerlink" title="7.4分析每一个分组"></a>7.4分析每一个分组</h2><p>首先将聚类结果合并到原始数据集中。</p>
+<p><strong>【代码7-4-1】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 对于4个客户分组，分析每一个分组</span>
+dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">=</span> y_kmeans<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>然后查看每个聚类的样本个数</p>
+<p><strong>【代码7-4-2】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 查看每个聚类的样本个数</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>dataset<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>value_counts<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>每个聚类的样本个数如图11所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151121174.png" alt="图11 每个聚类的样本个数"></p>
+<p>由上图所示，分组0客户数最多，分组2客户数最少。因为银行理财产品目标客户为高收入人群，这一群体占比少，故有理由推测，分组2、3大概率是银行的目标客户。</p>
+<p>下面开始逐一分析各个分组数据，锁定目标客户。</p>
+<p>首先定义4个变量，每个分组1个，把每个分组的样本存储到变量中，写代码比较方便。</p>
+<p><strong>【代码7-4-3】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 为每个分组生成单独的变量，便于代码的编写</span>
+cluster_0 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">]</span>
+cluster_1 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">]</span>
+cluster_2 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">]</span>
+cluster_3 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>cluster_0这个变量存储着分组0的所有样本，同理cluster_1这个变量存储着分组1的所有样本。</p>
+<p>首先分析信用卡额度：CREDIT_LIMIT。</p>
+<p><strong>【代码7-4-4】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 分析 credit limit 字段</span>
+credit_limit_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>credit_limit_df这个变量存储着信用卡额度的所有信息，如图12所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151209104.png" alt="图12 credit_limit_df变量的值"></p>
+<p>通过平均数（mean）和中位数（50%）发现，cluster_1和cluster_2和cluster_3的信用卡额度最高。cluster_0的信用卡额度较少，且cluster_0分组的客户数量最多，所以判断cluster_0这个分组的人群收入较低。cluster_1和cluster_2和cluster_3收入高。</p>
+<p>再来分析买东西花了多少钱：PURCHASES。</p>
+<p><strong>【代码7-4-5】financial_management_recommendation.py</strong></p>
+<p>#%%</p>
+<p># 分析 purchases 字段</p>
+<p>purchases_df = pd.DataFrame(data={</p>
+<p> ‘cluster_0’:cluster_0.PURCHASES.describe(),</p>
+<p> ‘cluster_1’:cluster_1.PURCHASES.describe(),</p>
+<p> ‘cluster_2’:cluster_2.PURCHASES.describe(),</p>
+<p> ‘cluster_3’:cluster_3.PURCHASES.describe()})</p>
+<p>#%%</p>
+<p>执行代码块。</p>
+<p>purchases_df变量的值如图13所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151257246.png" alt="图13 purchases_df变量的值"></p>
+<p>通过平均数（mean）和中位数（50%）发现，cluster_2和cluster_3买东西花的钱最多。结合上面的分析，判断分组2和分组3属于高收入，高消费群体。</p>
+<p>再来看看信用卡取现频率：CASH_ADVANCE_FREQUENCY。</p>
+<p><strong>【代码7-4-6】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 分析 cash_advance_frequency 字段</span>
+cash_advance_frequency_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>cash_advance_frequency_df变量的值如图14所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151312262.png" alt="图14 cash_advance_frequency_df变量的值"></p>
+<p>通过平均数（mean）和中位数（50%）发现，信用卡取现比较频繁的组是分组1，判断分组1资金可能比较紧张。这和上面的分析吻合，分组1虽然信用卡额度高，但是用信用卡消费比较低，而且还经常取现，说明分组1属于中低收入人群。</p>
+<p>上面的分析中判断分组2、3是高收入高消费人群。结合分组2的平均曲线是0.05，是所有分组中最小的，所以判断分组2最优。这和上面的分析吻合，分组2额度高、消费高，并且不需要信用卡取现。</p>
+<p>最后来分析全额还款情况：PRC_FULL_PAYMENT。</p>
+<p><strong>【代码7-4-7】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 分析 prc_full_payment 字段</span>
+prc_full_payment_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>prc_full_payment_df变量的值如图15所示。</p>
+<p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602151352475.png" alt="图15 prc_full_payment_df变量的值"></p>
+<p>通过平均数（mean）和中位数（50%）发现，分组2每个月还款几乎都是一次性还完，再次印证了分组2有钱、不缺钱、出手扩初。</p>
+<p>也发现cluster_2中也有一小部分人没有把账单全部还完。把这部分人过滤出去。</p>
+<p><strong>【代码7-4-8】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># 得到目标客户</span>
+target_dataset <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span><span class="token operator">==</span><span class="token number">2</span><span class="token punctuation">]</span>
+target_dataset <span class="token operator">=</span> target_dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>target_dataset<span class="token punctuation">[</span>target_dataset<span class="token punctuation">[</span><span class="token string">'PRC_FULL_PAYMENT'</span><span class="token punctuation">]</span><span class="token operator">&lt;</span><span class="token number">0.6</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>执行代码块。</p>
+<p>分组2共有24个客户，过滤掉了13个客户，最终剩下11个客户。这11个客户可作为银行理财产品优质目标客户。</p>
+<h1 id="8-案例代码"><a href="#8-案例代码" class="headerlink" title="8. 案例代码"></a>8. 案例代码</h1><p><strong>【案例代码】financial_management_recommendation.py</strong></p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token triple-quoted-string string">'''
+基于K-Means根据信用卡消费情况推荐银行理财产品
+'''</span>
+
+<span class="token comment" spellcheck="true"># 导入包</span>
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+
+<span class="token comment" spellcheck="true"># 读取数据集</span>
+dataset <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span><span class="token string">'credit_card.csv'</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 查看数据集情况</span>
+dataset_description_df <span class="token operator">=</span> dataset<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 查看相关性-热力图</span>
+<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
+corrmat <span class="token operator">=</span> dataset<span class="token punctuation">.</span>corr<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">,</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xticks<span class="token punctuation">(</span>rotation<span class="token operator">=</span><span class="token number">90</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>yticks<span class="token punctuation">(</span>rotation<span class="token operator">=</span><span class="token number">90</span><span class="token punctuation">)</span>
+sns<span class="token punctuation">.</span>heatmap<span class="token punctuation">(</span>corrmat<span class="token punctuation">,</span> vmax<span class="token operator">=</span><span class="token number">1.0</span><span class="token punctuation">,</span> square<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 查看相关性-皮尔森系数</span>
+corr_data <span class="token operator">=</span> dataset<span class="token punctuation">.</span>corr<span class="token punctuation">(</span>method<span class="token operator">=</span><span class="token string">'pearson'</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 检查缺失数据</span>
+<span class="token keyword">def</span> <span class="token function">get_missing_data_summary</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    dataset_na <span class="token operator">=</span> dataset<span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>sum<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    dataset_na <span class="token operator">=</span> dataset_na<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset_na<span class="token punctuation">[</span>dataset_na <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span><span class="token punctuation">.</span>sort_values<span class="token punctuation">(</span>ascending<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+    missing_data <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">'Missing Count'</span> <span class="token punctuation">:</span>dataset_na<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> missing_data
+
+missing_data <span class="token operator">=</span> get_missing_data_summary<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 处理缺失数据</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'CREDIT_LIMIT'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'MINIMUM_PAYMENTS'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>isnull<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 再次检查缺失数据</span>
+missing_data <span class="token operator">=</span> get_missing_data_summary<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 处理类别型字段</span>
+categorical_features <span class="token operator">=</span> dataset<span class="token punctuation">.</span>dtypes<span class="token punctuation">[</span>dataset<span class="token punctuation">.</span>dtypes <span class="token operator">==</span> <span class="token string">'O'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'There are %d categorical features'</span> <span class="token operator">%</span><span class="token punctuation">(</span>len<span class="token punctuation">(</span>categorical_features<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 移除无用的列</span>
+X <span class="token operator">=</span> dataset<span class="token punctuation">.</span>iloc<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">.</span>values
+
+<span class="token comment" spellcheck="true"># 使用PCA降维</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>decomposition <span class="token keyword">import</span> PCA
+pca <span class="token operator">=</span> PCA<span class="token punctuation">(</span>n_components <span class="token operator">=</span> None<span class="token punctuation">)</span>
+X_pca <span class="token operator">=</span> pca<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X<span class="token punctuation">)</span>
+explained_variance_ratio <span class="token operator">=</span> pca<span class="token punctuation">.</span>explained_variance_ratio_
+
+<span class="token comment" spellcheck="true"># 画出累计方差解释图，用于选择新生成的自变量的个数</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>np<span class="token punctuation">.</span>cumsum<span class="token punctuation">(</span>pca<span class="token punctuation">.</span>explained_variance_ratio_<span class="token punctuation">)</span><span class="token punctuation">,</span> c<span class="token operator">=</span><span class="token string">'orange'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'number of components'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'cumulative explained variance'</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 选择新生成的自变量的个数</span>
+pca <span class="token operator">=</span> PCA<span class="token punctuation">(</span>n_components <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">)</span>
+X_pca <span class="token operator">=</span> pca<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 特征缩放</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>preprocessing <span class="token keyword">import</span> StandardScaler
+sc_X <span class="token operator">=</span> StandardScaler<span class="token punctuation">(</span><span class="token punctuation">)</span>
+X_scaled <span class="token operator">=</span> sc_X<span class="token punctuation">.</span>fit_transform<span class="token punctuation">(</span>X_pca<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 训练K-Means模型</span>
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>cluster <span class="token keyword">import</span> KMeans
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> silhouette_score <span class="token comment" spellcheck="true"># 轮廓系数</span>
+
+<span class="token comment" spellcheck="true"># 打印轮廓系数，确定K-Means中K的个数</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">21</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters <span class="token operator">=</span> i<span class="token punctuation">,</span> init <span class="token operator">=</span> <span class="token string">'k-means++'</span><span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> max_iter<span class="token operator">=</span><span class="token number">300</span><span class="token punctuation">,</span> random_state <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    kmeans<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+    y_kmeans <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+    silhouette <span class="token operator">=</span> silhouette_score<span class="token punctuation">(</span>X_scaled<span class="token punctuation">,</span> y_kmeans<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'当聚类个数是%d时，对应的轮廓系数是%.4f'</span> <span class="token operator">%</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> silhouette<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 使用K=4建立K-Means模型</span>
+kmeans <span class="token operator">=</span> KMeans<span class="token punctuation">(</span>n_clusters <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span> init <span class="token operator">=</span> <span class="token string">'k-means++'</span><span class="token punctuation">,</span> n_init<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">,</span> max_iter<span class="token operator">=</span><span class="token number">300</span><span class="token punctuation">,</span> random_state <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+kmeans<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+y_kmeans <span class="token operator">=</span> kmeans<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>X_scaled<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 可视化聚类效果</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'red'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 0'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'blue'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 1'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'green'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 2'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> X_scaled<span class="token punctuation">[</span>y_kmeans <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'cyan'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Cluster 3'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>kmeans<span class="token punctuation">.</span>cluster_centers_<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> kmeans<span class="token punctuation">.</span>cluster_centers_<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> s <span class="token operator">=</span> <span class="token number">300</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token string">'yellow'</span><span class="token punctuation">,</span> label <span class="token operator">=</span> <span class="token string">'Centroids'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">'Clusters of customers'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'pca1'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'pca2'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 对于4个客户分组，分析每一个分组</span>
+dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">=</span> y_kmeans
+
+<span class="token comment" spellcheck="true"># 查看每个聚类的样本个数</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>dataset<span class="token punctuation">.</span>cluster<span class="token punctuation">.</span>value_counts<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 为每个分组生成单独的变量，便于代码的编写</span>
+cluster_0 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">]</span>
+cluster_1 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">]</span>
+cluster_2 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">]</span>
+cluster_3 <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">]</span>
+
+<span class="token comment" spellcheck="true"># 分析 credit limit 字段</span>
+credit_limit_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>CREDIT_LIMIT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 分析 purchases 字段</span>
+purchases_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>PURCHASES<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>PURCHASES<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>PURCHASES<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>PURCHASES<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 分析 cash_advance_frequency 字段</span>
+cash_advance_frequency_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>CASH_ADVANCE_FREQUENCY<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 分析 prc_full_payment 字段</span>
+prc_full_payment_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token operator">=</span><span class="token punctuation">{</span>
+ <span class="token string">'cluster_0'</span><span class="token punctuation">:</span>cluster_0<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_1'</span><span class="token punctuation">:</span>cluster_1<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_2'</span><span class="token punctuation">:</span>cluster_2<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ <span class="token string">'cluster_3'</span><span class="token punctuation">:</span>cluster_3<span class="token punctuation">.</span>PRC_FULL_PAYMENT<span class="token punctuation">.</span>describe<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 得到目标客户</span>
+target_dataset <span class="token operator">=</span> dataset<span class="token punctuation">[</span>dataset<span class="token punctuation">[</span><span class="token string">'cluster'</span><span class="token punctuation">]</span><span class="token operator">==</span><span class="token number">2</span><span class="token punctuation">]</span>
+target_dataset <span class="token operator">=</span> target_dataset<span class="token punctuation">.</span>drop<span class="token punctuation">(</span>target_dataset<span class="token punctuation">[</span>target_dataset<span class="token punctuation">[</span><span class="token string">'PRC_FULL_PAYMENT'</span><span class="token punctuation">]</span><span class="token operator">&lt;</span><span class="token number">0.6</span><span class="token punctuation">]</span><span class="token punctuation">.</span>index<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+            </div>
+            <hr />
+
+            
+
+            
+
+            
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-er/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="基于K-Means根据信用卡消费情况推荐银行理财产品">
+                        
+                        <span class="card-title">基于K-Means根据信用卡消费情况推荐银行理财产品</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            根据信用卡消费情况推荐银行理财产品案例将对8950条持卡人信用卡数据的18个信用卡相关的属性进行分析，建立聚类模型，对这8950个持卡人进行客户分组，然后把银行的理财产品推荐给优秀的分组。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/机器学习/" class="post-category" target="_blank">
+                                    机器学习
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-yi/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="案例一：基于Apriori挖掘超市商品之间关联性">
+                        
+                        <span class="card-title">案例一：基于Apriori挖掘超市商品之间关联性</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/机器学习/" class="post-category" target="_blank">
+                                    机器学习
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fa fa-list"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+    
+
+</main>
+
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
+
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+<!-- 代码语言 -->
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+<!-- 代码块复制 -->
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+<script type="text/javascript" src="/libs/codeBlock/clipboard.min.js"></script>
+<!-- 代码块收缩 -->
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script> 
+<!-- 代码块折行 -->
+<style type="text/css">code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }</style>
+
+
+    
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <script type="text/javascript"> var OriginTitile = document.title, st; document.addEventListener("visibilitychange", )
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+</body>
+
+</html>
