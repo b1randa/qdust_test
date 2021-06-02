@@ -4,6 +4,456 @@
   
     
     <entry>
+      <title>案例五：医疗命名实体识别</title>
+      <link href="/2021/06/02/zi-ran-yu-yan-an-li-wu/"/>
+      <url>/2021/06/02/zi-ran-yu-yan-an-li-wu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握序列标注任务的文本预处理方法；</li><li>了解命名实体识别中的IOB标注；</li><li>掌握BiLstm+Crf模型的搭建方法；</li><li>掌握BiLstm+Crf模型的训练和评估；</li><li>使用训练的模型进行命名实体识别预测；</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>本次案例旨在通过糖尿病相关的教科书、研究论文来做糖尿病文献挖掘并构建糖尿病知识图谱，我们需要使用已经标注的医学语料，同构搭建BiLstm+Crf进行训练，最终实现使用算法来提取医疗领域的各种实体，从而为进一步提取实体关系构建知识图谱打好基础。</p><p>本案例提供的数据已经经过IOB标注处理，并且文本和标注是分为两个文件存放，其中,文本数据已经做了单字空格间隔处理如下图所示:</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602230203146.png" alt="单字空格间隔处理图"></p><p>标注文件如下图所示:</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602230230577.png" alt="标注文件示图"></p><p>实体类别共十五类。</p><p>类别名称和定义</p><p><strong>疾病相关：</strong></p><ol><li>疾病名称 (Disease)，如I型糖尿病。</li><li>病因(Reason)，疾病的成因、危险因素及机制。比如“糖尿病是由于胰岛素抵抗导致”，胰岛素抵抗是属于病因。</li><li>临床表现 (Symptom)，包括症状、体征，病人直接表现出来的和需要医生进行查体得出来的判断。如”头晕” “便血” 等。</li><li>检查方法(Test)，包括实验室检查方法，影像学检查方法，辅助试验，对于疾病有诊断及鉴别意义的项目等，如甘油三酯。</li><li>检查指标值(Test_Value)，指标的具体数值，阴性阳性，有无，增减，高低等，如”&gt;11.3 mmol/L”。</li></ol><p><strong>治疗相关：</strong></p><ol><li>药品名称(Drug)，包括常规用药及化疗用药，比如胰岛素。</li><li>用药频率(Frequency)，包括用药的频率和症状的频率，比如一天两次。</li><li>用药剂量（Amount），比如500mg/d。</li><li>用药方法（Method）：比如早晚，餐前餐后，口服，静脉注射，吸入等。</li><li>非药治疗(Treatment)，在医院环境下进行的非药物性治疗，包括放疗，中医治疗方法等，比如推拿、按摩、针灸、理疗，不包括饮食、运动、营养等。</li><li>手术（Operation），包括手术名称，如代谢手术等。</li><li>不良反应（SideEff），用药后的不良反应。</li></ol><p><strong>常规实体：</strong></p><ol><li>部位（Anatomy），包括解剖部位和生物组织，比如人体各个部位和器官，胰岛细胞。</li><li>程度（level），包括病情严重程度，治疗后缓解程度等。</li><li>持续时间(Duration)，包括症状持续时间，用药持续时间，如“头晕一周”的“一周”。</li></ol><p>我们以第87050行数据为例:</p><p>文本:进 而 改 善 其 心 脏 功 能 [ 4 4 ] 。</p><p>标签: O O O O O B-Anatomy I-Anatomy O O O O O O O</p><p>根据标签我们可以看到“心脏”是一个“部位（Anatomy）”类型的实体。</p><p>在本案例中,模型经过训练后,我们使用模型来提取文本“随着生活水平的提高，2型糖尿病已经成为继心脑血管病、恶性肿瘤之后的又一常见疾病”中的实体，经过模型预测，结果如下:</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602230253239.png" alt="模型预测结果"></p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>IOB标注；</li><li>序列标注文本预处理方式；</li><li>序列标注训练数据构造；</li><li>BiLstm+CRF模型搭建；</li><li>CRF损失计算方法；</li><li>使用pytorch进行BiLstm+CRF模型训练；</li><li>使用pytorch进行命名实体识别；</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，学时分配如下：</p><ul><li>数据预处理（1学时）；</li><li>BiLstm+CRF模型搭建（2学时）。</li><li>模型训练和预测（1学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li>Windows 10 操作系统；</li><li>Pycharm</li><li>Python3.6</li><li>pytorch 1.6.0</li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><ol><li><p>创建项目并拷贝数据文件</p></li><li><p>编写加载数据相关函数</p></li><li><p>实现数据批次迭代器</p></li><li><p>实现BiLstm+CRF完整模型</p></li></ol><ul><li>实现BiLstm模型</li><li>实现CRF层</li><li>组装BiLstm和CRF</li></ul><ol start="5"><li><p>实现模型训练和评估</p></li><li><p>实现命名实体识别预测</p></li></ol><p><strong><a href="/medias/files/自然语言/案例五：医疗命名实体识别.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 自然语言学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例四：酒店评论情感分析</title>
+      <link href="/2021/06/02/zi-ran-yu-yan-an-li-si/"/>
+      <url>/2021/06/02/zi-ran-yu-yan-an-li-si/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握情感分析任务的建模方法；</li><li>掌握BiLstm模型的搭建；</li><li>掌握torchtext工具的使用；</li><li>掌握使用flask部署模型；</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>在线下消费时,大家已经习惯了在美团、口碑、携程等网站上查看该商户的评价，以确定自己是否在这家店进行消费。每一家商户在这些APP上都有大量的评论信息，有的是正面的评论信息，有的是负面的评论信息。一款智能的APP能自动的对用户的评价进行分类。</p><p>本案例使用携程APP的酒店评价数据，结合自然语言处理技术和机器学习方法，建立自然语言情感分析模型。该模型能自动的对用户评价的情感进行分析判别，判断该评论是对商户的正面评论还是负面评论。</p><p>本案例提供的数据文件包含了neg和pos文件夹，各含有3000个评论文本如下图所示:</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225952450.png" alt="评论文本目录示图"></p><p>文本内容如下图所示:</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602230008885.png" alt="文本内容示图"></p><p>其中neg代表“消极”，pos代表“积极”。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>文本预处理；</li><li>BiLstm建模；</li><li>torchtext工具使用；</li><li>flask框架部署模型并开放接口；</li><li>调用接口进行情感分类；</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，学时分配如下：</p><ul><li>文本预处理（1学时）；</li><li>模型训练和评估（2.5学时）</li><li>模型部署和预测（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li>Windows 10 操作系统；</li><li>Pycharm</li><li>Python3.6</li><li>pytorch 1.6.0</li><li>flask 1.1.2</li><li>torchtext 0.7.0</li><li>requests 2.24.0</li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><ol><li>创建项目并拷贝数据文件</li><li>文本预处理</li><li>模型训练和评估</li><li>flask部署和调用</li></ol><p><strong><a href="/medias/files/自然语言/案例四：酒店评论情感分析.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 自然语言学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例三：基于迁移学习的新闻分类</title>
+      <link href="/2021/06/02/zi-ran-yu-yan-an-li-san/"/>
+      <url>/2021/06/02/zi-ran-yu-yan-an-li-san/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握文本预处理方法；</li><li>掌握基于大型预训练模型进行迁移学习的方法</li><li>掌握使用pytorch深度学习框架搭建Bert和ERNIE模型进行文本分类。</li><li>掌握文本分类模型的评估</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>迁移学习近年来在图形领域中得到了快速的发展，主要在于某些特定的领域不具备足够的数据，不能让深度模型学习的很好，需要从其它领域训练好的模型迁移过来，再使用该模型进行微调，使得该模型能很好地拟合少量数据的同时又具备较好的泛化能力（不过拟合）。</p><p>在迁移学习任务中，需要事先定义一组源数据集合，使用该集合训练得到预训练好的模型，该模型具备了源数据集合中的一些知识，在目标数据集合上微调该预训练的模型，使得模型能够很好地完成目标数据集合定义的任务，即完成了迁移学习。</p><p>本案例使用的数据是从THUCNews新闻数据集中中抽取的20万条新闻标题，使用近年来非常强大的预训练模型Bert和ERNIE模型进行迁移学习分类，研究大型预训练模型在实际工业场景中的应用。</p><p>数据集的文本长度在20到30之间。一共10个类别，每类2万条。数据以字为单位输入模型。类别：财经、房产、股票、教育、科技、社会、时政、体育、游戏、娱乐。</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225538882.png" alt="数据集划分"></p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225554102.png" alt="数据示图"></p><p>本案例使用2种模型做分类，这2种模型分别是Bert模型和ERNIE模型。案例中已经给出了基于海量数据训练好的预训练模型bert_pretrain和ERNIE_pretrain。</p><p>Bert预训练模型迁移学习训练结果的分类报告如下图所示:</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225619938.png" alt="Bert预训练模型迁移学习训练结果"></p><p>ERNIE预训练模型迁移学习训练结果如下图所示:</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225634429.png" alt="ERNIE预训练模型迁移学习训练结果"></p><p>从上面的图中可以看出,在该数据集上,ERNIE预训练模型性能相比bert预训练模型结果稍微差一些。.</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>pytorch_pretrained框架的使用；</li><li>文本分词和词表构建；</li><li>使用pytorch_pretrained搭建Bert模型；</li><li>使用pytorch_pretrained搭建ERNIE模型；</li><li>使用pytorch进行模型训练。</li><li>使用pytorch进行文本分类预测；</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，学时分配如下：</p><ul><li>数据预处理（1学时）；</li><li>模型搭建（1学时）。</li><li>模型训练（2学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li>Windows 10 操作系统；</li><li>Pycharm</li><li>Python3.6</li><li>pytorch 1.6.0</li><li>tqdm</li><li>importlib</li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><ol><li><p>项目准备</p></li><li><p>数据预处理</p></li><li><p>Bert和ERNIE模型搭建</p><p>• 搭建Bert模型；</p><p>• 搭建ERNIE模型；</p></li><li><p>搭建模型训练、测试和预测流程</p></li><li><p>总装并完成训练和测试;</p></li><li><p>模型预测</p></li></ol><p><strong><a href="/medias/files/自然语言/案例三：基于迁移学习的新闻分类.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 自然语言学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例二：基于rasa的多轮对话任务机器人</title>
+      <link href="/2021/06/02/zi-ran-yu-yan-an-li-er/"/>
+      <url>/2021/06/02/zi-ran-yu-yan-an-li-er/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>了解多轮对话机器人的构建技术；</li><li>掌握rasa多轮对话机器人框架的使用</li><li>掌握多轮对话机器人构建流程</li><li>掌握训练和测试对话机器人</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>本次案例将带领同学们利用Rasa搭建一个基于犯罪信息知识图谱的多轮智能对话检索机器人。Rasa是一个用于对话的开源机器学习框架。首先了解用户想说的内容（NLU），然后根据上下文信息对其进行适当的操作对话（Core）。</p><p>当前对话系统主要包括4类：</p><ul><li>问答型对话系统</li><li>任务型对话系统</li><li>闲聊型问答系统</li><li>图谱型问答系统</li></ul><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225054590.png" alt="对话系统分类示图"></p><p>Rasa是一个用于对话的开源机器学习框架。首先了解用户想说的内容（NLU），然后根据上下文信息对其进行适当的操作对话（Core）。</p><p>Rasa核心模块</p><ul><li>NLU - 自然语言理解；该模块主要负责对用户输入的文本进行意图识别和实体抽取，理解用户想要做什么以及其中包含的关键信息。</li></ul><p>输入：一串自然语言的文本</p><p>输出：分词和实体提取意图识别之后的结构化文本，(intent，slot，value): 用一个三元组结构化描述text，比如 “姚明的身高是81吗？” 对应的三元组 （询问身高，hight，81）</p><ul><li><p>Core - 对话管理</p><p>对话管理（Dialog Management，DM）控制着人机对话的进程，对话管理通过对自然语言理解模块的输出（即意图、槽位、槽位信息）的处理来进行和用户的交互和反应。针对带有明确意图的用户，在对话管理过程中用户不但可以完善或修正自己需求，管理系统也可以在用户需求不够具体的时候明确或澄清用户的需求，以达到最终的任务完成。</p><p>对话管理系统主要包括两部分：状态追踪和对话策略。对话策略通常作为对话管理的输出，如对该场景下缺失槽位的反问策略等。以某公司智能产品介绍系统的多伦对话为示例：</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225120997.png" alt="多轮对话示例"></p></li><li><p>NLG - 自然语言生成</p><p>基于多伦对话的自然语言生成，通常也采用基于模板、基于语法或模型等。模板与语法主要基于规则的策略，模型可以用如seq2seq等网络生成自然语言。</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225145955.png" alt="Rasa对话流程图"></p></li><li><p>1、将用户输入的Message传递到Interpreter(NLU模块)，并将信息打包为一个字典, 该模块负责识别Message中的”意图(intent)“和提取所有”实体”(entity)数据；</p></li><li><p>2、Rasa Core会将Interpreter提取到的意图和识别传给Tracker对象，保持对话状态(Conversation State)；</p></li><li><p>3/4/5、利用Policy记录Tracker对象的当前状态，并选择执行相应的Action，其中，这个Action是被记录在Track对象中的；</p></li><li><p>6、将执行Action返回的结果输出，即完成一次人机交互（一轮对话结束）。</p></li></ul><p>最终，我们搭建的多轮对话任务机器人运行效果如下图所示：</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602225202750.png" alt="运行效果示例"></p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>基于py2Neo和neo4j搭建知识图谱；</li><li>意图识别；</li><li>实体识别提取。</li><li>对话管理；</li><li>rasa框架使用</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，学时分配如下：</p><ul><li>知识图谱搭建（1学时）；</li><li>rasa智能对话机器人搭建（3学时）。</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li>ubutun；</li><li>neo4j</li><li>Pycharm</li><li>Python3.6</li><li>py2neo 4.3.0</li><li>rasa 1.10.1</li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><ol><li><p>项目准备</p></li><li><p>知识图谱搭建</p></li><li><p>rasa智能对话机器人搭建</p></li></ol><ul><li>编写域文件domain.yml；</li><li>编写自然语言理解训练文件nlu.md；</li><li>查看对话管理训练文件stories.md</li><li>编写对话业务处理脚本文件actions.py</li><li>编写分词字典文件user_dict.txt</li><li>编写配置文件config.yml</li><li>编辑endpoints.yml文件</li></ul><ol start="4"><li>训练和测试机器人</li></ol><p><strong><a href="/medias/files/自然语言/案例二：基于rasa的多轮对话任务机器人.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 自然语言学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例一：国家电网智能投诉分类</title>
+      <link href="/2021/06/02/zi-ran-yu-yan-an-li-yi/"/>
+      <url>/2021/06/02/zi-ran-yu-yan-an-li-yi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握word2vec+lr(逻辑回归)模型的应用；</li><li>掌握文本预处理方法；</li><li>掌握使用pytorch深度学习框架搭建TextRCNN模型进行文本分类。</li><li>掌握文本分类模型的评估</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>随着信息化的快速发展，电网各企业积累的数据越来越多。在电力操作规则，运维记录，调度运行记录，营销档案，客服，故障检修等存在着大量文本类数据[由于中文文本类数据的复杂性，无法直接运用机器学习对文本数据进行智能化分析，因此基于电力文本的文本挖掘技术研究显得十分重要。研究电力文本特征提取，电网本体建模。构建调控、检修和营销等知识图谱。支持电力调度机器人，电网设备智能运维和智能客服等，最终形成新一代电力智能搜索和问答解决方案。</p><p>本案例主要基于95598工单完成文本分类，选取某省95598工单投诉数据集4229条。其中的工单可以分类为反映、建议、表扬、举报、投诉、以往业务、查询、报修8个类别。数据如下图所示:</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602224414401.png" alt="数据图"></p><p>其中每一类投诉的文本内容数量为:</p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602224457573.png" alt="文本内容数量示图"></p><p>可以看到共有8中不同的文本类别,其中下标为5(以往业务)仅有60条文本是数据，属于少类样本。我们的任务就是构建文本分类算法模型，根据用户的投诉文本类容准确判定投诉的类别。</p><p>本案例使用2种模型对国家电网投诉做分类，这2种模型分别是word2vec+lr(逻辑回归)模型和TextRCNN模型。</p><ol><li>使用word2vec+lr(逻辑回归)模型对95588投诉工单进行分类。</li></ol><p>使用gensim工具包基于在搜狐新闻数据集上预训练的word2vec向量进行增量训练，词向量维度为100，分类模型选择逻辑回归，最终结果如图1所示。</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602224540657.png" alt="图1 word2vec+lr模型分类结果"></p><p>从上图中可以看出，word2vec+lr最终在测试集上的准确率为0.95，平均F1值为0.95，效果非常不错，但是依然还有很大的改进空间。</p><ol start="2"><li>使用TextRCNN模型对95588投诉工单进行分类。</li></ol><p>利用pytorch深度学习框架搭建TextRCNN模型(2层Bilstm)训练15个epochs，最终效果分别如图2、图3所示。</p><p> <img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602224601666.png" alt="图2 TextRCNN模型分类报告"></p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602224617068.png" alt="图3 TextRCNN模型混淆矩阵"></p><p>从上面的两张图中可以看出，相比word2vec+lr模型，TextRCNN模型无论是准确率还是F1值都有了非常大的提高，准确率为0.9835，提高了3.35个百分点，F1值为0.9833，也提高了3个百分点，这说明在该数据集上TextRCNN模型要显著的优于word2vec+lr模型。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>gensim工具包使用；</li><li>word2vec增量训练；</li><li>逻辑回归建模；</li><li>文本分词和词表构建；</li><li>TextRCNN模型搭建</li><li>使用pytorch进行模型训练。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，学时分配如下：</p><ul><li>word2vec+lr(逻辑回归)模型投诉分类（1学时）；</li><li>TextRCNN模型投诉分类（3学时）。</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li>Windows 10 操作系统；</li><li>Pycharm</li><li>Python3.6</li><li>pytorch 1.6.0</li><li>tqdm</li><li>sklearn</li><li>genism</li><li>tensorboardX</li><li>jieba</li></ul><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><ol><li>数据介绍和项目准备</li></ol><ul><li>数据介绍</li><li>创建项目并拷贝数据文件</li></ul><ol start="2"><li>word2vec+lr(逻辑回归)模型投诉分类</li></ol><ul><li>实现word2vec增量训练；</li><li>实现word2vec+LR模型的训练和评估；</li></ul><ol start="3"><li>TextRCNN模型投诉分类</li></ol><ul><li>实现文本预处理；</li><li>实现数据集加载和批次迭代；</li><li>搭建TextRCNN模型；</li><li>搭建模型训练和测试流程;</li><li>实现各环节总装并完成训练和评估;</li></ul><p><strong><a href="/medias/files/自然语言/案例一：国家电网智能投诉分类.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 自然语言学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例三：基于传统目标检测算法识别目标并定位其位置</title>
+      <link href="/2021/06/02/tu-xiang-shi-bie-an-li-san/"/>
+      <url>/2021/06/02/tu-xiang-shi-bie-an-li-san/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>理解模型的保存与加载；</li><li>掌握传统目标检测算法流程；</li><li>掌握滑动窗口、图像金字塔、非极大值抑制等概念；</li><li>掌握resnet50分类模型的使用；</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例将首先使用图像金字塔不断缩小图像规模得到多张图像，然后使用滑动窗口处理每张图像得到多个ROI，并将得到的一批ROI传入ResNet50分类模型做分类，最后使用非极大值抑制算法确定最终边界框，以得到最终目标检测结果。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>Python语言编程；</li><li>NumPy和OpenCV库的使用；</li><li>滑动窗口、图像金字塔、非极大值抑制的原理；</li><li>ResNet50分类模型的使用</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>定义目标检测算法（2学时）</li><li>预测检测结果（2学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7.4</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下2部分：</p><ol><li><p>定义目标检测算法；</p><p>传统目标检测算法包含4个部分：首先使用图像金字塔按比例不断缩小图像尺寸得到多张图像，然后对每张图像使用滑动窗口选取ROI区域，得到一批ROI后，将ROI传入分类模型做分类，最终使用非极大值抑制方法处理边界框。</p></li><li><p>预测检测结果；</p><p>调用1）目标检测算法中定义的4个方法，并使用ResNet50模型进行分类识别。</p></li></ol><p><strong><a href="/medias/files/图像识别/案例三：基于传统目标检测算法识别目标并定位其位置.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 图像识别 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例二：基于CNN的肺炎识别</title>
+      <link href="/2021/06/02/tu-xiang-shi-bie-an-li-er/"/>
+      <url>/2021/06/02/tu-xiang-shi-bie-an-li-er/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握迁移学习中的参数迁移方法；</li><li>掌握数据增强；</li><li>掌握CNN模型训练；</li><li>掌握CNN模型评估</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>本案例基于自定义的网络结构训练X胸片分类模型。在训练模型过程中，巧妙的使用数据增强技术平衡训练数据，并利用迁移学习技术，使用在Imagenet数据集上预训练模型的部分参数初始化自定义网络的部分参数，最后在测试集上评估分类模型的有效性。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>Python语言编程；</li><li>数据增强；</li><li>参数迁移；</li><li>训练模型；</li><li>评估模型</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>建立卷积神经网络（0.5学时）</li><li>训练模型（3学时）</li><li>评估模型分类性能（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7.4</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li><p>设计卷积神经网络结构；</p></li><li><p>训练模型；</p><p>模型训练使用迁移学习的方法，使用VGG16前4层卷积层的参数初始化设计的网络的前4层卷积层的参数。</p></li><li><p>评估模型性能。</p></li></ol><p><strong><a href="/medias/files/图像识别/案例二：基于CNN的肺炎识别.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 图像识别 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例一：基于2种迁移学习方法做鲜花分类并比较</title>
+      <link href="/2021/06/02/tu-xiang-shi-bie-an-li-yi/"/>
+      <url>/2021/06/02/tu-xiang-shi-bie-an-li-yi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握将预训练的神经网络作为特征提取器的迁移学习方法；</li><li>掌握微调的迁移学习方法；</li><li>掌握逻辑回归模型；</li><li>掌握预训练的VGG16模型使用；</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>本案例使用两种方式的迁移学习技术实现鲜花分类，一种是使用预训练的无头部的VGG16模型作为特征提取器提取图像特征，然后基于提取的特征建立逻辑回归模型做分类。另一种是基于预训练的VGG16网络模型使用微调的迁移学习方式训练鲜花分类模型。最后，对使用两种方法得到的模型进行对比。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>预训练的神经网络作为特征提取器的迁移学习方法；</li><li>微调的迁移学习方法；</li><li>逻辑回归模型；</li><li>训练模型；</li><li>评估模型。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>将预训练模型作为特征提取器的鲜花分类（1.5学时）</li><li>微调预训练网络的鲜花分类（2学时）</li><li>对比两种迁移学习方法得到的分类模型（0.5）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7.4</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><p>迁移学习作为机器学习的一个重要分支，侧重于将已经学习过的知识迁移应用于新的问题中。使用迁移学习技术可以使模型得到更高的准确率，也可以缩短模型的训练时间。迁移学习可以应用于图像分类、目标检测、图像分割等多个计算机视觉领域。</p><p>本案例分为以下两个主要部分：</p><ol><li><p>将预训练模型作为特征提取器的鲜花分类</p><p>使用预训练的无头部的VGG16模型作为特征提取器提取图像特征，然后基于提取的特征建立逻辑回归模型做分类。</p></li><li><p>微调预训练网络的鲜花分类</p><p>基于预训练的VGG16网络模型使用微调的迁移学习方式训练鲜花分类模型。</p></li><li><p>对比两种迁移学习方法得到的分类模型</p><p>在同样的实验环境下，比较两种迁移学习方式训练模型的速度及模型分类性能。</p></li></ol><p><strong><a href="/medias/files/图像识别/案例一：基于2种迁移学习方法做鲜花分类并比较.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 图像识别 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例八：周期卷积代替线性卷积及正弦信号频谱泄露问题</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-ba/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-ba/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>进行周期卷积代替线性卷积的合理性实验；</li><li>理解DFT计算正弦信号频谱时频谱泄露问题。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><ul><li>用周期卷积代替线性卷积</li><li>当用DFT计算正弦信号频谱时，若截取信号的总长度N是正弦序列周期的整数倍时，求出的频谱看不到频谱泄漏。</li><li>在进行DFT运算时发生频谱泄漏后与之前的频谱是否一致</li></ul><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>周期卷积</li><li>DFT运算</li><li>matlab编程</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2.5学时，具体安排如下：</p><ul><li>周期卷积学习（0.5学时）</li><li>正弦频谱学习（1学时）</li><li>分别进行实验（0.5学时）</li><li>分析实验结果（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Windows10 x64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>MatlabR2019bx64</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>用周期卷积代替线性卷积进行实验；</li><li>通过实验验证当用DFT计算正弦信号频谱时，若截取信号的总长度N是正弦序列周期的整数倍时，求出的频谱看不到频谱泄漏。</li><li>通过实验验证在进行DFT运算时发生频谱泄漏后与之前的频谱是否一致；</li></ol><p><strong><a href="/medias/files/图像处理/案例八：周期卷积代替线性卷积及正弦信号频谱泄露问题.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例七：FIR低通滤波</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-qi/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-qi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul><li>熟悉FIR数字滤波器窗函法和频率抽样法设计的一般原理</li><li>理解窗函数FIR滤波器设计的具体方法和步骤</li><li>理解FIR滤波器的阶数对滤波器性能的影响</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><ul><li>针对FIR低通滤波器，改变N=31、101、301、1001三种长度，观察低通滤波器效果。参考程序：FIR_LOWPASS_blackman</li><li>根据不同窗函数设计如下滤波器，并与加矩形窗时的通带、阻带性能比较。</li></ul><ol><li><p>髙通滤波器设计，用hanning(N)窗。</p></li><li><p>带通滤波器设计，用hamming(N)窗。</p></li><li><p>带阻滤波器设计，用blackman(N)窗。</p></li><li><p>带阻滤波器设计，用triang(N)窗。</p><p>设计滤波器，用hamming (N)窗。</p></li></ol><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><p>Matlab编程</p><p>FIR低通滤波器</p><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2学时，具体安排如下：</p><ul><li>学习FIR低通滤波器（0.5学时）</li><li>进行相关实验（1学时）</li><li>查看实验结果（0.5学时）</li><li>对实验结果进行分析（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Windows 10 x64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>MatlabR2019bx64</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>针对FIR低通滤波器，改变N=31、101、301、1001三种长度，观察低通滤波器效果。</li><li>用hamming窗设计带通滤波器，用blackman窗设计带阻滤波器；</li><li>设计滤波器，用hamming (N)窗。</li></ol><p><strong><a href="/medias/files/图像处理/案例七：FIR低通滤波.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例六：基于Python的视频图像处理实验环境配置方案</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-liu/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-liu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>熟悉python的安装与使用。</li><li>学会安装和配置anconda环境。</li><li>学会安装pycharm和使用pycharm安装库。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>清楚Python，PyCharm，Anaconda三者的区别与联系，熟悉三者安装过程及其注意事项。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><p>Python</p><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共1学时，具体安排如下：</p><ul><li>安装python（0.5学时）</li><li>安装Anaconda，安装PyCharm（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Anaconda3.5</li><li>PyCharm</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><p>本案例主要分为以下3步骤：</p><ol><li>安装python3。</li><li>安装Anaconda。</li><li>安装PyCharm</li></ol><p><strong><a href="/medias/files/图像处理/案例六：基于Python的视频图像处理实验环境配置方案.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例五：图像文件读入和显示</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-wu/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-wu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>熟悉Visual Studio 2010开发环境。</li><li>了解OpenCV开发库，学会在VS2010环境下安装和配置OpenCV。</li><li>掌握开源库的通用安装和配置方法。</li><li>通过运行一个简单的程序，初步了解OpenCV程序的特点。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><ul><li>编写程序掌握OpenCV加载及显示图像的方法。</li><li>查看、理解并掌握图像的属性（包括类型、大小、分辨率等）。</li></ul><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><p>Opencv的使用</p><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共1学时，具体安排如下：</p><ul><li>安装OpenCV（0.5学时）</li><li>编写代码配置程序（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>OpenCV 2.4.11</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>VS2010</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><p>本案例主要分为以下2步骤：</p><ol><li>检查所用的计算机系统是否已安装了VS2010（中英文版本均可）。</li><li>安装OpenCV 2.4.11，若已安装，则查看所在目录，这里设opencv的安装目录为：D:\opencv。</li></ol><p>编写代码并配置opencv程序，完成程序的编译、链接和运行。<strong>（如想要每一步的详细图片展示，请参考本章第8小节“OpenCV配置文档”）</strong></p><p><strong><a href="/medias/files/图像处理/案例五：图像文件读入和显示.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例四：形态学在车牌定位和车牌号码字符分割中的应用</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-si/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-si/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握图像形态学基本概念；</li><li>熟练应用图像形态学对二值图像进行优化处理。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>案例二和案例三分别实现了车牌定位和车牌号码字符分割。本案例主要应用图像形态学，优化这两个案例。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>腐蚀、膨胀；</li><li>开运算、闭运算</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>形态学优化车牌感兴趣区域（2学时）</li><li>形态学优化车牌二值化图像（2学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3</li><li>opencv 3.x</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Jupyter Notebook</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下2步骤：</p><ol><li><p>形态学优化车牌感兴趣区域；</p><p>通过形态学处理，对案例二车牌感兴趣区域进行优化处理，将车牌字符部分进行填充，补齐车牌轮廓</p></li><li><p>形态学优化车牌二值化图像。</p><p>通过形态学处理，对车牌二值化图像进行优化，去除孤立噪点，细化字符</p></li></ol><p><strong><a href="/medias/files/图像处理/案例四：形态学在车牌定位和车牌号码字符分割中的应用.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例三：基于颜色阈值分割和边缘检测的车牌定位</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-san/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-san/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握车牌定位的基本流程；</li><li>熟练应用图像分割技术。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例主要采用颜色阈值分割和边缘检测进行车牌定位。车牌定位在工程实际项目上一般分为粗定位和精定位两部分。先通过颜色信息进行车牌感兴趣区域的粗略定位，然后基于边缘信息，根据车牌上下和左右明显的边框进行精确定位。车牌定位的精度直接影响后续车牌字符分割的效果。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>彩色图像灰度化；</li><li>彩色空间转换：RGB转HSV；</li><li>二值化；</li><li>边缘检测；</li><li>直方图</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>获取车牌感兴趣区域（1学时）</li><li>车牌感兴趣区域粗定位（1学时）</li><li>车牌感兴趣区域精定位（1.5学时）</li><li>在原图画出车牌定位结果（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3</li><li>opencv 3.x</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Jupyter Notebook</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下4个步骤：</p><ol><li><p>获取车牌感兴趣区域；</p><ul><li>先对图像进行预处理，主要包括高斯平滑滤波，彩色图像转灰度图，RGB图像转HSV图像</li><li>根据蓝色车牌颜色进行阈值化（本案例仅以蓝色车牌为例，不考虑其他颜色车牌）</li></ul></li><li><p>车牌感兴趣区域粗定位；</p></li><li><p>车牌感兴趣区域精定位；</p><ul><li>对第一部分获取的粗略位置区域进行适当扩充</li><li>在扩充区域内，计算边缘图像</li><li>根据边缘图像，利用车牌边框边缘长的信息，通过边缘像素直方图确定车牌精确的上下和左右边界</li></ul></li><li><p>在原图画出车牌定位结果。</p><p>车牌定位的流程图如图1所示。</p></li></ol><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602220932158.png" alt="图1 车牌定位流程图"></p><p><strong><a href="/medias/files/图像处理/案例三：基于颜色阈值分割和边缘检测的车牌定位.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例二：基于二值图像的车牌号码字符分割</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-er/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-er/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握车牌号码字符分割的基本流程；</li><li>熟练应用图像分割技术。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>车牌号码字符分割是车牌识别系统中关键的一项内容，字符分割完成后，会接着进行车牌号码单字符的识别。本案例首先通过自行编程实现OTSU阈值化算法，得到车牌图像二值图，然后采用二值图像的垂直投影直方图进行车牌号码字符分割。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>OTSU二值化；</li><li>二值图像垂直投影直方图</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>车牌图像二值化（1学时）</li><li>车牌图像上下区域裁剪（1学时）</li><li>基于二值图像垂直投影直方图进行字符分割（2学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3</li><li>opencv 3.x</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Jupyter Notebook</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>车牌图像二值化；<ul><li>高斯平滑滤波</li><li>OTSU阈值化</li></ul></li><li>车牌图像上下区域裁剪；</li><li>基于二值图像垂直投影直方图进行字符分割。</li></ol><p>车牌号码字符分割的流程图如图1所示。</p><p>​                               </p><p><img src="https://tuchuang980615.oss-cn-beijing.aliyuncs.com/img/image-20210602220725177.png" alt="图1 车牌号码字符分割流程图"></p><p><strong><a href="/medias/files/图像处理/案例二：基于二值图像的车牌号码字符分割.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例一：车牌图像预处理</title>
+      <link href="/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-yi/"/>
+      <url>/2021/06/02/shu-zi-tu-xiang-chu-li-an-li-yi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握车牌图像预处理的基本操作</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例主要进行车牌图像的预处理操作，包括彩色图像灰度化，计算车牌灰度图像直方图，车牌图像高斯平滑滤波去除噪点。所有的功能模块均自行编写代码，不借助OpenCV的API函数。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>彩色图像灰度化；</li><li>图像直方图；</li><li>空间滤波</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共2学时，具体安排如下：</p><ul><li>彩色图像灰度化（0.5学时）</li><li>计算灰度图像直方图（1学时）</li><li>灰度图像高斯平滑滤波（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3</li><li>opencv 3.x</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Jupyter Notebook</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3个步骤：</p><ol><li>彩色图像灰度化；</li><li>计算灰度图像直方图；</li><li>采用高斯平滑滤波去除车牌图像的噪点。</li></ol><ul><li>对输入图像进行Zero padding处理</li><li>求解高斯滤波模板</li><li>采用高斯平滑模板对待处理图像进行卷积操作</li></ul><p><strong><a href="/medias/files/图像处理/案例一：车牌图像预处理.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例八：基于3DCNN的人体动作识别</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-ba/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-ba/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul><li>理解3DCNN的应用场景；</li><li>掌握3DCNN算法。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><p>使用3DCNN进行时空特征学习，用TRECVID 2008数据集进行实验，寻找最佳架构，来对数据集视频中进行人体动作识别</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><ul><li>Python语言编程</li><li>人体动作识别网络架构</li><li>3DCNN算法</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2.5学时，具体安排如下：</p><ul><li>数据预处理（0.5学时）</li><li>进行模型架构与训练（1学时）</li><li>查看训练结果（0.5学时）</li><li>对比分析结果（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li>操作系统：</li></ul><ol><li>Windows 10 x64位操作系统</li></ol><ul><li>软件环境：</li></ul><ol><li>Python 3.7</li></ol><ul><li>开发环境与工具：</li></ul><ol><li>tensorflow 1.2</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下4部分：</p><ol><li>数据预处理，把视频数据处理成分类模型需要的格式；</li><li>训练模型，输入到一个多类线性支持向量机训练模型进行训练；</li><li>查看训练结果，与基于框架的2D CNN模型进行对比；</li><li>处理模型输出的结果，增加结果的可读性。</li></ol><p><strong><a href="/medias/files/深度学习/案例八：基于3DCNN的人体动作识别.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例七：基于C3D的行为识别</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-qi/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-qi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul><li>理解C3D的应用场景场景；</li><li>掌握C3D算法。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><p>使用C3D进行时空特征学习，用UCF101(一个中等规模的数据集)进行实验，寻找最佳架构，来对数据集视频中进行行为识别</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><ul><li>Python语言编程</li><li>行为识别网络架构</li><li>C3D算法</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2.5学时，具体安排如下：</p><ul><li>数据预处理（0.5学时）</li><li>进行模型架构与训练（1学时）</li><li>查看训练结果（0.5学时）</li><li>对比分析结果（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li>操作系统：</li></ul><ol><li>Windows 10 x64位操作系统</li></ol><ul><li>软件环境：</li></ul><ol><li>Python 3.7</li></ol><ul><li>开发环境与工具：</li></ul><ol><li>tensorflow 1.2</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下4部分：</p><ol><li>数据预处理，把视频数据处理成分类模型需要的格式；</li><li>提取特征，输入到一个多类线性支持向量机训练模型进行训练；</li><li>查看训练结果，与目前最好的手工特征进行对比；</li><li>处理模型输出的结果，增加结果的可读性。</li></ol><p><strong><a href="/medias/files/深度学习/案例七：基于C3D的行为识别.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例六：预测维基百科未来一个月的文章数</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-liu/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-liu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握LSTM模型；</li><li>掌握使用LSTM解决时间序列问题；</li><li>处理时间序列数据。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例将对145063篇文章550天的访问量进行分析，建立LSTM模型，预测未来一个月内每篇文章的访问量。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>Python语言编程；</li><li>NumPy和Pandas库的使用；</li><li>LSTM模型；</li><li>处理时间序列数据。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>筛选出无任何缺失值的文章（0.2学时）</li><li>随机选取一篇文章并进行预处理（1学时）</li><li>建立LSTM模型（0.5学时）</li><li>编译模型、训练模型（1.3学时）</li><li>测试模型及可视化实际值和预测值（0.5学时）</li><li>预测维基百科本篇文章的访问量（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>sklearn 0.23</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>近年来，随着通信网络技术的不断发展，网络流量的需求也日益增多。网络流量模型和预测在分析实际网络流量和网络性能方面起着重要作用。通过足够准确的预测，可以提高网络的利用率和性能。一个经典的案例是预测维基百科145063篇文章未来的每天的访问量。</p><p>本案例主要分为以下5部分：</p><ol><li>筛选出无任何缺失值的文章；</li><li>随机选取一篇文章并进行预处理，为训练模型做准备；</li><li>建立LSTM模型，编译模型，训练模型；</li><li>测试模型，并可视化对比实际值与预测值；</li><li>预测下一天维基百科文章的访问量。</li></ol><p><strong><a href="/medias/files/深度学习/案例六：预测维基百科未来一个月的文章数.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例五：实时表情识别</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-wu/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-wu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握图像多分类；</li><li>掌握实时识别；</li><li>了解并应用人脸检测；</li><li>了解并应用模型训练过程的监控。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本实案例练一个表情识别模型，然后基于该模型实现实时的表情识别。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>卷积神经网络</li><li>图像分类</li><li>人脸检测</li><li>实时识别</li><li>监控模型训练过程</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>编写人脸检测模块（1学时）</li><li>实现CNN核心类（0.5学时）</li><li>实现模型训练过程监控类（0.5学时）</li><li>训练模型（1学时）</li><li>实时表情识别（1学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下5部分：</p><ol><li>做表情识别首先要从图像中获取到所有的人脸图像。首先应该编写人脸检测模块找到人脸位置；</li><li>编写CNN核心类代码，用于做图像分类；</li><li>编写训练过程监控类，用于实时查看模型训练过程中的Accuracy值和Loss值；</li><li>训练模型，评估模型性能，修改超参数以提高性能，最后保存模型；</li><li>使用预训练模型和人脸检测做实时表情识别。</li></ol><p><strong><a href="/medias/files/深度学习/案例五：实时表情识别.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例四：基于LSTM模型的相似文本生成</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-si/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-si/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握自然语言处理的基本方法；</li><li>理解LSTM的原理；</li><li>掌握基于LSTM模型的相似文本生成。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例以《爱丽丝梦游仙境》原著小说为训练数据，建立模型，让模型有能力根据给出的文本生成和原小说相似的内容。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>LSTM模型</li><li>文本数据向量化</li><li>相似文本生成</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>处理文本数据（1学时）；</li><li>构建并训练LSTM模型（2学时）；</li><li>生成相似文本（1学时）。</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统</strong>：</li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>数据是文本类型，需要先对文本数据做文本向量化处理；</li><li>构建LSTM模型，训练模型，保存模型，验证模型是否训练完毕；</li><li>调用预训练模型继续写小说。</li></ol><p><strong><a href="/medias/files/深度学习/案例四：基于LSTM模型的相似文本生成.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例三：基于LSTM的电影评论情感分析</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-san/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-san/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握双向LSTM模型；</li><li>掌握文本预处理;</li><li>掌握使用双向LSTM模型进行情感预测。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>情感分析是自然语言处理最基本的应用，情感分类较为简单，实用性也较强。常见的购物网站、电影网站都可以采集到相对高质量的数据集，也很容易给业务领域带来收益。例如，可以结合领域上下文，自动分析特定类型客户对当前产品的意见，可以分主题分用户类型对情感进行分析，以作针对性的处理，甚至基于此进一步推荐产品，提高转化率，带来更高的商业收益。</p><p>本案例主要基于双向LSTM进行“段落级”情感分析——IMDB影评情感分类。输入为一个段落，输出为影评是正面还是负面的信息。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>Python语言编程</li><li>双向LSTM模型</li><li>文本预处理</li><li>使用双向LSTM模型进行情感预测</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>文本预处理（1.5学时）</li><li>训练双向LSTM模型（1.5学时）</li><li>应用模型（1学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>数据预处理，为建立模型做准备；</li><li>建立双向LSTM模型对影评进行情感分类；</li><li>使用训练好的模型对新数据进行预测。</li></ol><p><strong><a href="/medias/files/深度学习/案例三：基于LSTM的电影评论情感分析.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例二：基于CNN的体感游戏手势识别</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-er/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-er/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><ul><li>掌握如何构建卷积神经网络模型；</li><li>掌握CNN模型训练；</li><li>掌握CNN模型评估。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2.案例内容"></a>2.案例内容</h1><p>本案例基于自定义的卷积神经网络训练手势识别模型，在测试集上评估模型性能，以及使用训练好的模型对图片识别，并显示图片以及识别结果。</p><p>模型可以用在体感游戏中，通过手势控制着游戏的操作。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3.案例知识点"></a>3.案例知识点</h1><ul><li>Python语言编程；</li><li>NumPy和OpenCV库的使用；</li><li>构建卷积神经网络模型。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4.案例时长"></a>4.案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>基于自定义卷积神经网络训练手势识别模型（2.5学时）</li><li>应用训练好的模型测试图片（1.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5.案例实验环境"></a>5.案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7.4</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6.案例分析"></a>6.案例分析</h1><p>本案例分为以下两个主要部分：</p><ol><li><p>基于自定义卷积神经网络训练手势识别模型</p><p>基于自定义的卷积神经网络训练手势识别模型，并在测试集上评估模型性能。</p></li><li><p>应用训练好的模型测试图片</p><p>调用在（2）中训练得到的模型对图片进行测试，并显示图片及测试结果。</p></li></ol><p><strong><a href="/medias/files/深度学习/案例二：基于CNN的体感游戏手势识别">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例一：根据图片识别11种食物</title>
+      <link href="/2021/06/02/shen-du-xue-xi-an-li-yi/"/>
+      <url>/2021/06/02/shen-du-xue-xi-an-li-yi/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>掌握微调（Fine-Tuning）的迁移学习方法；</li><li>掌握数据增强；</li><li>掌握CNN模型训练；</li><li>掌握CNN模型评估</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>迁移学习是指将一个场景下学习到的知识迁移到另一种场景去应用。使用深度学习技术解决问题的过程中，最常见的困难在于，因为模型有大量的参数需要训练，因此需要海量训练数据作支撑。但是在解决某一领域的具体问题时，经常无法得到足够的数据进行模型训练。而借助迁移学习，可在一定程度上解决这个问题。</p><p>本案例基于在Imagenet数据集上预训练的无头部的VGG16网络模型，在food11食物数据集上训练分类模型，微调部分网络的参数，并在测试集上评估模型性能。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>Python语言编程；</li><li>NumPy和OpenCV库的使用；</li><li>微调的迁移学习方式；</li><li>VGG16分类模型的使用</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p><ul><li>生成数据集（0.5学时）</li><li>使用微调的迁移学习方式训练模型（3学时）</li><li>应用训练好的模型测试单张图片（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li>操作系统：</li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li>软件环境：</li></ul><ol><li>Python 3.7</li><li>Tensorflow 2.3.0</li><li>Keras 2.4.3</li></ol><ul><li>开发环境与工具：</li></ul><ol><li>Spyder 4</li><li>Terminal（终端）</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>迁移学习作为机器学习的一个重要分支，侧重于将已经学习过的知识迁移应用于新的问题中。使用迁移学习技术可以使模型得到更高的准确率，也可以缩短模型的训练时间。迁移学习可以应用于图像分类、目标检测、图像分割等多个计算机视觉领域。</p><p>本案例分为以下三个主要部分：</p><ol><li><p><strong>生成数据集</strong></p><p>虽然我们已经准备好了数据集，但是在本案例中并不是直接使用这个数据集，需要自己生成训练所需要的数据集格式。</p></li><li><p><strong>使用微调的迁移学习方式训练模型</strong></p><p>基于预训练的VGG16网络模型使用微调的迁移学习方式训练食物分类模型。</p></li><li><p><strong>应用训练好的模型测试单张图片</strong></p><p>调用在（2）中训练得到的模型对单张图片进行测试，并显示图片及测试结果。</p></li></ol><p><strong><a href="/medias/files/深度学习/案例一：根据图片识别11种食物.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>案例八：预测鸢尾花的种类</title>
       <link href="/2021/06/02/ji-qi-xue-xi-an-li-ba/"/>
       <url>/2021/06/02/ji-qi-xue-xi-an-li-ba/</url>
