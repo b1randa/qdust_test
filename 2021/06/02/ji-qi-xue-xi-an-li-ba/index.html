@@ -4,14 +4,16 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="案例二：基于K-Means根据信用卡消费情况推荐银行理财产品, 青岛科技大学 人工智能案例">
+    <meta name="keywords" content="案例八：预测鸢尾花的种类, 青岛科技大学 人工智能案例">
     <meta name="baidu-site-verification" content="fmlEuI34ir">
     <meta name="google-site-verification" content="yCy2azpds5XSuGZvis6OuA-XIGF5GuGpYRAaGfD6o48">
     <meta name="360-site-verification" content="b7c11a830ef90fd1464ad6206bb7b6e7">
-    <meta name="description" content="1.案例目的• 理解聚类问题的场景；
-• 掌握解决聚类问题的整套流程；
-• 掌握数据预处理和聚类模型的构建。
-2. 案例内容根据信用卡消费情况推荐银行理财产品案例将对8950条持卡人信用卡数据的18个信用卡相关的属性进行分析，建立聚类模型，">
+    <meta name="description" content="1. 案例目的
+理解KNN分类算法；
+理解分类的场景；
+掌握模型评估方法。
+
+2. 案例内容本案例将对150条鸢尾花的5个属性（花萼长度、花萼宽度、花瓣长度、花瓣宽度、鸢尾花种类）进行分析，建立分类模型，评价模型性能，然后使用该模型预测鸢尾">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +21,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>案例二：基于K-Means根据信用卡消费情况推荐银行理财产品 | 青岛科技大学</title>
+    <title>案例八：预测鸢尾花的种类 | 青岛科技大学</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -151,13 +153,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        案例二：基于K-Means根据信用卡消费情况推荐银行理财产品
+                        案例八：预测鸢尾花的种类
                     </div>
                 </div>
             </div>
@@ -302,7 +304,7 @@
                 
                 <div class="info-break-policy">
                     <i class="fa fa-file-word-o fa-fw"></i>案例文件字数:&nbsp;&nbsp;
-                    348
+                    290
                 </div>
                 
 
@@ -320,30 +322,52 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1.案例目的"></a>1.案例目的</h1><p>• 理解聚类问题的场景；</p>
-<p>• 掌握解决聚类问题的整套流程；</p>
-<p>• 掌握数据预处理和聚类模型的构建。</p>
-<h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>根据信用卡消费情况推荐银行理财产品案例将对8950条持卡人信用卡数据的18个信用卡相关的属性进行分析，建立聚类模型，对这8950个持卡人进行客户分组，然后把银行的理财产品推荐给优秀的分组。</p>
-<h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><p>• Python语言编程；</p>
-<p>• 数据处理；</p>
-<p>• 聚类模型；</p>
-<p>• 分析聚类结果。</p>
-<h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共4学时，具体安排如下：</p>
-<p>• 数据预处理（2学时）</p>
-<p>• 构建聚类模型（1学时）</p>
-<p>• 分析每一个分组（1学时）</p>
-<h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><p><strong>•操作系统：</strong></p>
-<p>1）Linux Ubuntu 16.04 64位操作系统</p>
-<p><strong>•软件环境：</strong></p>
-<p>1）Python 3.7</p>
-<p>2）Sklearn 0.23</p>
-<p><strong>•开发环境与工具：</strong></p>
-<p>1）Spyder 4</p>
-<h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p>
-<p>1）处理数据，为建立聚类模型做准备；</p>
-<p>2）构建聚类模型，并使用轮廓系数的方法选择K-Means中K的个数；</p>
-<p>3）探索K-Means得到的每一个客户分组，从每一个客户分组中得到线索，从而找到目标客户。</p>
-<p><strong><a href="/medias/files/机器学习/案例二：基于K-Means根据信用卡消费情况推荐银行理财产品.docx">详细案例实验过程请单击此处下载</a></strong></p>
+                <h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul>
+<li>理解KNN分类算法；</li>
+<li>理解分类的场景；</li>
+<li>掌握模型评估方法。</li>
+</ul>
+<h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>本案例将对150条鸢尾花的5个属性（花萼长度、花萼宽度、花瓣长度、花瓣宽度、鸢尾花种类）进行分析，建立分类模型，评价模型性能，然后使用该模型预测鸢尾花的种类。</p>
+<h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul>
+<li>Python语言编程；</li>
+<li>numpy和pandas库的使用；</li>
+<li>KNN分类算法；</li>
+<li>分类报告；</li>
+<li>使用模型进行预测。</li>
+</ul>
+<h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共1学时，具体安排如下：</p>
+<ul>
+<li>数据处理（0.4学时）</li>
+<li>训练模型（0.2学时）</li>
+<li>评估模型（0.2学时）</li>
+<li>测试新数据（0.2学时）</li>
+</ul>
+<h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul>
+<li><strong>操作系统：</strong></li>
+</ul>
+<ol>
+<li>Linux Ubuntu 16.04 64位操作系统</li>
+</ol>
+<ul>
+<li><strong>软件环境：</strong></li>
+</ul>
+<ol>
+<li>Python 3.7</li>
+</ol>
+<ul>
+<li><strong>开发环境与工具：</strong></li>
+</ul>
+<ol>
+<li>Spyder 4</li>
+</ol>
+<h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下4部分：</p>
+<ol>
+<li>处理数据，为建立分类模型做准备；</li>
+<li>建立分类模型；</li>
+<li>评估模型性能；</li>
+<li>使用训练好的模型对新数据做分类。</li>
+</ol>
+<p><strong><a href="/medias/files/机器学习/案例八：预测鸢尾花的种类.docx">详细案例实验过程请单击此处下载</a></strong></p>
 
             </div>
             <hr />
@@ -373,29 +397,30 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2021/06/02/ji-qi-xue-xi-an-li-san/">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-ba/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="案例三：使用Python基于K近邻实现商品推荐">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="案例八：预测鸢尾花的种类">
                         
-                        <span class="card-title">案例三：使用Python基于K近邻实现商品推荐</span>
+                        <span class="card-title">案例八：预测鸢尾花的种类</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            使用K近邻算法实现电影的推荐，即根据你喜欢的影片推荐与其相似的影片。
+                            本案例将对150条鸢尾花的5个属性（花萼长度、花萼宽度、花瓣长度、花瓣宽度、鸢尾花种类）进行分析，建立分类模型，评价模型性能，然后使用该模型预测鸢尾花的种类。
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
-                        </span>
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2021-06-02
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
@@ -408,6 +433,7 @@
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -418,19 +444,19 @@
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/06/02/ji-qi-xue-xi-an-li-yi/">
+                <a href="/2021/06/02/ji-qi-xue-xi-an-li-qi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="案例一：基于Apriori挖掘超市商品之间关联性">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="案例七：预测皮马印第安人是否有糖尿病">
                         
-                        <span class="card-title">案例一：基于Apriori挖掘超市商品之间关联性</span>
+                        <span class="card-title">案例七：预测皮马印第安人是否有糖尿病</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            某网上超市收集了1周内所有的交易中购物篮的商品信息。现要根据这些交易数据建立模型，预测顾客买了A商品后还倾向于买哪个B商品。
+                            基于逻辑回归模型进行预测皮马印第安人是否有糖尿病。
                         
                     </div>
                     <div class="publish-info">
