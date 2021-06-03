@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>案例九：基于Faster RCNN的目标检测</title>
+      <link href="/2021/06/03/shen-du-xue-xi-an-li-jiu/"/>
+      <url>/2021/06/03/shen-du-xue-xi-an-li-jiu/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul><li>应用Faster RCNN进行目标识别；</li><li>掌握Faster RCNN算法。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><p>对所给的图像进行目标识别</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><ul><li>Python语言编程</li><li>VGG-16应用</li><li>Faster RCNN算法</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2.5学时，具体安排如下：</p><ul><li>数据预处理（0.5学时）</li><li>做关联规则分析（1学时）</li><li>查看分析结果（0.5学时）</li><li>增加结果可读性（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li>操作系统：</li></ul><ol><li>Windows 10 x64位操作系统</li></ol><ul><li>软件环境：</li></ul><ol><li>Python 3.7</li><li>apyori 1.1</li></ol><ul><li>开发环境与工具：</li></ul><ol><li>Tensorflow r1.0</li><li>Docker</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下6部分：</p><ol><li>图片输入；</li><li>利用selective search 算法在图像中从上到下提取2000个左右的建议窗口(Region Proposal)；</li><li>将整张图片输入CNN，进行特征提取；</li><li>把建议窗口映射到CNN的最后一层卷积feature map上；</li><li>通过RoI pooling层使每个建议窗口生成固定尺寸的feature map；</li><li>利用Softmax Loss(探测分类概率) 和Smooth L1 Loss(探测边框回归)对分类概率和边框回归(Bounding box regression)联合训练.</li></ol><p><strong>[详细案例实验过程请单击此处下载](/medias/files/深度学习/案例九：基于Faster RCNN的目标检测.docx)</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 神经网络与深度学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>案例五：医疗命名实体识别</title>
       <link href="/2021/06/02/zi-ran-yu-yan-an-li-wu/"/>
       <url>/2021/06/02/zi-ran-yu-yan-an-li-wu/</url>
