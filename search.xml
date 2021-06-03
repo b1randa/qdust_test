@@ -201,6 +201,12 @@
         <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1 案例目的"></a>1 案例目的</h1><ul><li>熟悉FIR数字滤波器窗函法和频率抽样法设计的一般原理</li><li>理解窗函数FIR滤波器设计的具体方法和步骤</li><li>理解FIR滤波器的阶数对滤波器性能的影响</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2 案例内容"></a>2 案例内容</h1><ul><li>针对FIR低通滤波器，改变N=31、101、301、1001三种长度，观察低通滤波器效果。参考程序：FIR_LOWPASS_blackman</li><li>根据不同窗函数设计如下滤波器，并与加矩形窗时的通带、阻带性能比较。</li></ul><ol><li><p>髙通滤波器设计，用hanning(N)窗。</p></li><li><p>带通滤波器设计，用hamming(N)窗。</p></li><li><p>带阻滤波器设计，用blackman(N)窗。</p></li><li><p>带阻滤波器设计，用triang(N)窗。</p><p>设计滤波器，用hamming (N)窗。</p></li></ol><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3 案例知识点"></a>3 案例知识点</h1><p>Matlab编程</p><p>FIR低通滤波器</p><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4 案例时长"></a>4 案例时长</h1><p>共2学时，具体安排如下：</p><ul><li>学习FIR低通滤波器（0.5学时）</li><li>进行相关实验（1学时）</li><li>查看实验结果（0.5学时）</li><li>对实验结果进行分析（0.5学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5 案例实验环境"></a>5 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Windows 10 x64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>MatlabR2019bx64</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6 案例分析"></a>6 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>针对FIR低通滤波器，改变N=31、101、301、1001三种长度，观察低通滤波器效果。</li><li>用hamming窗设计带通滤波器，用blackman窗设计带阻滤波器；</li><li>设计滤波器，用hamming (N)窗。</li></ol><p><strong><a href="/medias/files/图像处理/案例七：FIR低通滤波.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
       
       
+      <categories>
+          
+          <category> 数字图像处理 </category>
+          
+      </categories>
+      
       
     </entry>
     
@@ -535,6 +541,25 @@
       <url>/2021/06/02/ji-qi-xue-xi-an-li-wu/</url>
       
         <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>理解贝叶斯概率公式；</li><li>掌握贝叶斯分类算法的原理；</li><li>掌握非结构化文本的处理；</li><li>掌握使用朴素贝叶斯实现对非结构化文本进行分类。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>使用朴素贝叶斯实现对新闻类别分类。</p><p>贝叶斯定理由英国数学家贝叶斯 ( Thomas Bayes 1702-1761 )发明，用来描述两个条件概率之间的关系，比如 P(A|B) 和 P(B|A)。朴素贝叶斯模型依据的概率公式为：P(A|B)=P(B|A)*P(A)/P(B)。</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>贝叶斯概率公式；</li><li>贝叶斯分类算法的原理；</li><li>非结构化文本的处理；</li><li>使用朴素贝叶斯实现对非结构化文本进行分类。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共1学时，具体安排如下：</p><ul><li>数据预处理（0.5学时）</li><li>构建朴素贝叶斯模型并训练（0.3学时）</li><li>评估模型（0.2学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>sklearn 0.23</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下3部分：</p><ol><li>处理数据，为建立朴素贝叶斯模型做准备；</li><li>构建朴素贝叶斯模型并训练；</li><li>评估模型性能</li></ol><p><strong><a href="/medias/files/机器学习/案例五:使用朴素贝叶斯实现对非结构化文本进行分类.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 机器学习 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>案例四：使用Python计算余弦相似度</title>
+      <link href="/2021/06/02/ji-qi-xue-xi-an-li-si/"/>
+      <url>/2021/06/02/ji-qi-xue-xi-an-li-si/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-案例目的"><a href="#1-案例目的" class="headerlink" title="1. 案例目的"></a>1. 案例目的</h1><ul><li>理解余弦相似度的作用；</li><li>掌握余弦相似度的原理；</li><li>掌握余弦相似度的编码实现。</li></ul><h1 id="2-案例内容"><a href="#2-案例内容" class="headerlink" title="2. 案例内容"></a>2. 案例内容</h1><p>案例使用余弦相似度从3篇文本中找出相似度比较高的2篇文本。</p><p>余弦相似度是用于衡量文档是否相似的度量。 在数学上，它测量在多维空间中投影的两个矢量的夹角余弦值。余弦相似度是有优势的，因为即使两个相似文档的欧几里德距离很大（文档的大小差异太大），它们仍然可能是相似的。余弦角度越小，余弦相似度越高。</p><p>匹配类似文档的常用方法是计算文档之间的公共单词数。但这种方法有一个固有的缺陷，即：随着文档的大小增加，即使文档谈论不同的主题，常用词的数量也趋于增加。余弦相似性有助于克服这一缺陷。</p><p>余弦数学公式如下所示：</p><p>​<br>$$<br>cos\theta = \frac{\vec{a} \cdot \vec{b}}{||\vec{a}|| \cdot ||\vec{b}||} = \frac{\Sigma_1^na_ib_i}{\sqrt{\Sigma_1^na_i^2}\sqrt{\Sigma^n_1b_i^2}}<br>$$</p><h1 id="3-案例知识点"><a href="#3-案例知识点" class="headerlink" title="3. 案例知识点"></a>3. 案例知识点</h1><ul><li>余弦相似度算法；</li><li>使用余弦相似度判断文本的相似性。</li></ul><h1 id="4-案例时长"><a href="#4-案例时长" class="headerlink" title="4. 案例时长"></a>4. 案例时长</h1><p>共1学时，具体安排如下：</p><ul><li>处理数据（0.6学时）</li><li>计算余弦相似度（0.4学时）</li></ul><h1 id="5-案例实验环境"><a href="#5-案例实验环境" class="headerlink" title="5. 案例实验环境"></a>5. 案例实验环境</h1><ul><li><strong>操作系统：</strong></li></ul><ol><li>Linux Ubuntu 16.04 64位操作系统</li></ol><ul><li><strong>软件环境：</strong></li></ul><ol><li>Python 3.7</li><li>sklearn 0.23</li></ol><ul><li><strong>开发环境与工具：</strong></li></ul><ol><li>Spyder 4</li></ol><h1 id="6-案例分析"><a href="#6-案例分析" class="headerlink" title="6. 案例分析"></a>6. 案例分析</h1><p>本案例主要分为以下2部分：</p><ol><li>处理数据，为计算余弦相似度做准备；</li><li>计算余弦相似度</li></ol><p><strong><a href="/medias/files/机器学习/案例四：使用Python计算余弦相似度.docx">详细案例实验过程请单击此处下载</a></strong></p>]]></content>
       
       
       <categories>
